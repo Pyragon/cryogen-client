@@ -1,7 +1,7 @@
 'use strict';
 
 const electron = require('electron')
-const remote = electron.remote
+const { remote, ipcRenderer } = electron
 const app = remote.app
 const session = remote.session
 const Notification = remote.Notification

@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
   //Focus on username input by default
-  $('#username').focus()
+  $('#username').focus();
 
   //Check if we have cookie saved for remember-me username
   session.defaultSession.cookies.get({
@@ -9,36 +9,36 @@ $(document).ready(() => {
     name: 'login-name'
   }, (error, cookies) => {
     if(!error && cookies.length > 0) {
-      var cookie = cookies[0]
+      var cookie = cookies[0];
       //Set username to value of cookie
-      $('#username').val(cookie.value)
+      $('#username').val(cookie.value);
       //Focus password input as we now have a username
-      $('#password').focus()
+      $('#password').focus();
     }
-  })
+  });
 
   //Register login button
-  $(document).on('click', '#login-button', login)
+  $(document).on('click', '#login-button', login);
   //Register keypress for username and password inputs
   $(document).on('keypress', '#username, #password', (e) => {
-    var value = $(e.target).val()
-    var id = $(e.target).attr('id')
+    var value = $(e.target).val();
+    var id = $(e.target).attr('id');
     //13=Enter
     if(e.which == 13) {
       //If we're focused on username input, focus on password input
-      if(id === 'username') $('#password').focus()
+      if(id === 'username') $('#password').focus();
       else {
         //If both username and password have values, login. Otherwise, focus on username
-        if(value === '' || $('#username').val() === '') $('#username').focus()
-        else login()
+        if(value === '' || $('#username').val() === '') $('#username').focus();
+        else login();
       }
     }
-  })
+  });
 
   function setError(error) {
-    $('#wrapper').effect('shake')
-    $('#login-error').css('display', 'block')
-    $('#login-error').text(error)
+    $('#wrapper').effect('shake');
+    $('#login-error').css('display', 'block');
+    $('#login-error').text(error);
   }
 
   //Request Authentication token from Cryogen API
@@ -53,7 +53,13 @@ $(document).ready(() => {
       }
       if(remember)
         saveCookie('login-name', username);
-    })
+      ipcRenderer.send('login:set-token', token);
+      ipcRenderer.send('login:switch-ui');
+      $('#wrapper').css({
+        'height': '450px',
+        'width': '750px'
+      });
+    });
   }
 
-})
+});
