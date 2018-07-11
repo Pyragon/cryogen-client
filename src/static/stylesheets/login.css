@@ -40,6 +40,16 @@
   height: 25px;
 }
 
+#login-error {
+  color: red;
+  padding: 0px;
+  margin: 0px;
+  font-size: 12px;
+  text-align: center;
+  display: none;
+  font-weight: bold;
+}
+
 #cont-guest {
   position: absolute;
   bottom: -2px;

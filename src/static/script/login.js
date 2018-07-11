@@ -35,6 +35,11 @@ $(document).ready(() => {
     }
   })
 
+  function setError(error) {
+    $('#login-error').css('display', 'block')
+    $('#login-error').text(error)
+  }
+
   //Request Authentication token from Cryogen API
   function login() {
     var username = $('#username').val();
@@ -42,7 +47,7 @@ $(document).ready(() => {
     var remember = $('#remember-check').prop('checked');
     requestAuthToken(username, password, (error, token) => {
       if(error) {
-        console.log(error);
+        setError(error);
         return;
       }
       if(remember)
