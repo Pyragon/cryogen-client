@@ -36,7 +36,7 @@ $(document).ready(() => {
   })
 
   function setError(error) {
-    $('#wrapper').shake()
+    $('#wrapper').effect('shake')
     $('#login-error').css('display', 'block')
     $('#login-error').text(error)
   }
