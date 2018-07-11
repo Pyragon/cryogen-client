@@ -2,6 +2,11 @@ $(document).ready(() => {
 
   //Focus on username input by default
   $('#username').focus();
+  ipcRenderer.send('git:last-commit');
+
+  ipcRenderer.on('git:last-commit', (event, data) => {
+    $('#last-commit').text(data.commit);
+  });
 
   //Check if we have cookie saved for remember-me username
   session.defaultSession.cookies.get({

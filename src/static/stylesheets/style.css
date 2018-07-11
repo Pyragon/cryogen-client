@@ -12,7 +12,7 @@ body {
   background-color: #333;
   border-radius: 5px;
   width: 300px;
-  height: 300px;
+  height: 315px;
 }
 
 #title-bar {
@@ -23,7 +23,7 @@ body {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   height: 24px;
-  width: 300px;
+  width: 100%;
 }
 
 #title {
@@ -38,7 +38,7 @@ body {
   -webkit-app-region: no-drag;
   position: absolute;
   right: 6px;
-  top: 0px;
+  top: 2px;
   line-height: 0px;
   margin-top: 4px;
 }

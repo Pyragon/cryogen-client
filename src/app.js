@@ -8,6 +8,8 @@ const path = require('path');
 const github = require('octonode');
 const setup = require('electron-pug');
 const windowState = require('electron-window-state');
+var client = github.client();
+var repo = client.repo('Pyragon/cryogen-client');
 const {
   app,
   BrowserWindow,
@@ -56,6 +58,22 @@ ipcMain.on('login:switch-ui', () => {
   switchToMainUI();
 });
 
+ipcMain.on('git:last-commit', () => {
+  var commits = repo.commits((error, body, headers) => {
+      if(error) {
+        console.log('Error getting commits: '+error);
+        return;
+      }
+      if(body.length > 0) {
+        var last = body[0];
+        var message = last.commit.message;
+        window.webContents.send('git:last-commit', {
+          commit: message
+        });
+      }
+  });
+});
+
 function sendNotification() {
   new Notification('Title', {
     body: 'test'
@@ -74,11 +92,11 @@ function switchToMainUI() {
 function createLoginWindow() {
   let loginWindowState = windowState({
     defaultWidth: 300,
-    defaultHeight: 300
+    defaultHeight: 315
   });
   window = new BrowserWindow({
     width: 300,
-    height: 300,
+    height: 315,
     x: loginWindowState.x,
     y: loginWindowState.y,
     resizable: false,

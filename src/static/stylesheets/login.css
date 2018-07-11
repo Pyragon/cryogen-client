@@ -52,7 +52,7 @@
 
 #cont-guest {
   position: absolute;
-  bottom: -2px;
+  bottom: 8px;
   right: 10px;
   font-size: 12px;
   color: white;
@@ -62,7 +62,16 @@
 
 #forgot-pass {
   position: absolute;
-  bottom: -2px;
+  bottom: 8px;
+  left: 10px;
+  font-size: 12px;
+  color: white;
+  cursor: pointer;
+}
+
+#last-commit {
+  position: absolute;
+  bottom: -8px;
   left: 10px;
   font-size: 12px;
   color: white;
