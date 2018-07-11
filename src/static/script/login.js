@@ -45,7 +45,6 @@ $(document).ready(() => {
         console.log(error);
         return;
       }
-      sendNotification('Successful', 'Successful login!')
       if(remember)
         saveCookie('login-name', username);
     })

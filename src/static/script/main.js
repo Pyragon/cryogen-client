@@ -100,11 +100,3 @@ function requestAuthToken(username, password, callback) {
     callback(response.error, response.token)
   })
 }
-
-function sendNotification(title, body) {
-  app.setAppUserModelId('com.cryo.cryogen-client')
-  var myNoty = new Notification(title, {
-    'body': body,
-    'icon': 'http://placekitten.com/g/300/300'
-  })
-}
