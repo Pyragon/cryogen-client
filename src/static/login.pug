@@ -1,0 +1,28 @@
+html
+  head
+    link(rel='stylesheet', href='stylesheets/login.css')
+    link(rel='stylesheet', href='stylesheets/style.css')
+    script.
+      if (typeof module === 'object') { window.module = module; module = undefined;}
+    script(src='script/jquery/jquery.js')
+    script.
+      if(window.module) module = window.module;
+    script(src='script/main.js')
+    script(src='script/login.js')
+  body
+    div#wrapper
+      div#title-bar
+        div#title Login to Cryogen
+        div.buttons
+          div#minimize-button
+          div#exit-button
+      img#logo(src='images/icon.png')
+      div.login
+        input#username(type='text', placeholder='Username')
+        input#password(type='password', placeholder='Password')
+      div#remember-me
+        input#remember-check(type='checkbox')
+        span#remember-text Remember Me
+      button#login-button Login
+      p#forgot-pass Forgot Password
+      p#cont-guest Continue as Guest...
