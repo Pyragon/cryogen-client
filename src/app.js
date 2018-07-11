@@ -5,6 +5,7 @@ const url = require('url')
 const path = require('path')
 const github = require('octonode')
 const setup = require('electron-pug')
+const windowState = require('electron-window-state')
 const {
   app,
   BrowserWindow,
@@ -14,11 +15,13 @@ const {
   Notification
 } = electron;
 
+var authToken = null;
+
 require('electron-reload')(__dirname, {
   electron: require('$(__dirname)/../../node_modules/electron')
 })
 require('electron-debug')({
-  showDevTools: true,
+  showDevTools: false,
   enabled: true
 })
 
@@ -30,7 +33,7 @@ app.on('ready', () => {
   } catch(err) {
     console.log('Error loading electron-pug:', err)
   }
-  createWindow()
+  createLoginWindow()
 });
 app.on('window-all-closed', () => {
   if(process.platform !== 'darwin')
@@ -38,7 +41,7 @@ app.on('window-all-closed', () => {
 });
 app.on('activate', () => {
   if(window === null)
-    createWindow();
+    createLoginWindow();
 });
 
 ipcMain.on('noty', sendNotification)
@@ -49,10 +52,16 @@ function sendNotification() {
   }).show()
 }
 
-function createWindow() {
+function createLoginWindow() {
+  let loginWindowState = windowState({
+    defaultWidth: 300,
+    defaultHeight: 300
+  })
   window = new BrowserWindow({
-    width: 300,
-    height: 300,
+    width: loginWindowState.width,
+    height: loginWindowState.height,
+    x: loginWindowState.x,
+    y: loginWindowState.y,
     resizable: false,
     radii: [5, 5, 5, 5],
     frame: false,
@@ -70,5 +79,6 @@ function createWindow() {
   window.on('closed', () => {
     window = null;
   });
+  loginWindowState.manage(window)
   Menu.setApplicationMenu(null)
 }
