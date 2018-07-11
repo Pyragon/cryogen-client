@@ -1,3 +1,4 @@
+/* jshint node: true */
 'use strict';
 
 const electron = require('electron')
