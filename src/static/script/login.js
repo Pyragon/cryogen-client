@@ -1,5 +1,10 @@
 $(document).ready(() => {
 
+  $('#wrapper').css({
+    'width': '300px',
+    'height': '315px'
+  });
+
   //Focus on username input by default
   $('#username').focus();
   ipcRenderer.send('git:last-commit');
@@ -56,13 +61,21 @@ $(document).ready(() => {
         setError(error);
         return;
       }
+      auth_token = token;
       if(remember)
         saveCookie('login-name', username);
       ipcRenderer.send('login:set-token', token);
-      ipcRenderer.send('login:switch-ui');
-      $('#wrapper').css({
-        'height': '450px',
-        'width': '750px'
+      getUserData((error, data) => {
+        if(error) {
+          console.log('Error loading user data: '+error);
+          return;
+        }
+        this.user = data;
+        switchToMainUI();
+        $('#wrapper').css({
+          'height': '450px',
+          'width': '750px'
+        });
       });
     });
   }

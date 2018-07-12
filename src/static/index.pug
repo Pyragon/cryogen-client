@@ -9,12 +9,13 @@ html
     script.
       if(window.module) module = window.module;
     script(src='script/main.js')
-    block head
   body
     div#wrapper
       div#title-bar
-        div#title Login to Cryogen
+        img#title-img(src='images/icon.png')
+        div#title
         div.buttons
           div#minimize-button
           div#exit-button
-      block content
+      div#main-content
+        include login

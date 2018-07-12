@@ -1,0 +1,36 @@
+#progress-bar {
+    margin-bottom: 10px;
+    display: block;
+}
+
+#user-area {
+  margin-left: 690px;
+  margin-top: 10px;
+  border: 1px solid #0e3851;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  background-color: #18597f;
+  text-align: center;
+  line-height: 45px;
+  font-size: 23px;
+  font-family: Didot, "Didot HTF-L11-Light", "Hoefler Text", Garamond, "Times New Roman", serif;
+}
+
+#user-name-let {
+  width: 45px;
+  height: 45px;
+  margin-top: 13px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 18px;
+}
+
+#container {
+  height: 8px;
+  width: 500px;
+  display: block;
+  position: absolute;
+  bottom: 35px;
+  left: 10px;
+}

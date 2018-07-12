@@ -68,12 +68,3 @@
   color: white;
   cursor: pointer;
 }
-
-#last-commit {
-  position: absolute;
-  bottom: -8px;
-  left: 10px;
-  font-size: 12px;
-  color: white;
-  cursor: pointer;
-}

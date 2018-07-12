@@ -1,19 +1,14 @@
-extend default
-
-block head
-  link(rel='stylesheet', href='stylesheets/login.css')
-  script(src='script/login.js')
-
-block content
-  img#logo(src='images/icon.png')
-  p#login-error
-  div.login
-    input#username(type='text', placeholder='Username')
-    input#password(type='password', placeholder='Password')
-  div#remember-me
-    input#remember-check(type='checkbox')
-    span#remember-text Remember Me
-  button#login-button Login
-  p#forgot-pass Forgot Password
-  p#cont-guest Continue as Guest...
-  p#last-commit 
+link(rel='stylesheet', href='stylesheets/login.css')
+script(src='script/login.js')
+img#logo(src='images/icon.png')
+p#login-error
+div.login
+  input#username(type='text', placeholder='Username')
+  input#password(type='password', placeholder='Password')
+div#remember-me
+  input#remember-check(type='checkbox')
+  span#remember-text Remember Me
+button#login-button Login
+p#forgot-pass Forgot Password
+p#cont-guest Continue as Guest...
+p#last-commit 

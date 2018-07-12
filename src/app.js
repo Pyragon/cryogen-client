@@ -14,12 +14,12 @@ const {
   app,
   BrowserWindow,
   Menu,
+  Tray,
   ipcMain,
-  session,
-  Notification
+  session
 } = electron;
 
-var authToken = null;
+var last_hash = null;
 
 require('electron-reload')(__dirname, {
   electron: require('$(__dirname)/../../node_modules/electron')
@@ -30,6 +30,7 @@ require('electron-debug')({
 });
 
 let window;
+let tray = null;
 
 app.on('ready', () => {
   try {
@@ -37,28 +38,30 @@ app.on('ready', () => {
   } catch(err) {
     console.log('Error loading electron-pug:', err);
   }
-  createLoginWindow();
+  tray = new Tray(path.join(__dirname, 'static/images/favicon.ico'));
+  tray.on('click', () => {
+
+  });
+  createWindow();
 });
+
 app.on('window-all-closed', () => {
   if(process.platform !== 'darwin')
     app.quit();
 });
+
 app.on('activate', () => {
   if(window === null)
-    createLoginWindow();
-});
-
-ipcMain.on('noty', sendNotification);
-
-ipcMain.on('login:set-token', (token) => {
-  authToken = token;
-});
-
-ipcMain.on('login:switch-ui', () => {
-  switchToMainUI();
+    createWindow();
 });
 
 ipcMain.on('git:last-commit', () => {
+  if(last_hash != null) {
+    window.webContents.send('git:last-commit', {
+      commit: last_hash
+    });
+    return;
+  }
   var commits = repo.commits((error, body, headers) => {
       if(error) {
         console.log('Error getting commits: '+error);
@@ -67,6 +70,7 @@ ipcMain.on('git:last-commit', () => {
       if(body.length > 0) {
         var last = body[0];
         var message = last.commit.message;
+        last_hash = message;
         window.webContents.send('git:last-commit', {
           commit: message
         });
@@ -74,31 +78,16 @@ ipcMain.on('git:last-commit', () => {
   });
 });
 
-function sendNotification() {
-  new Notification('Title', {
-    body: 'test'
-  }).show();
-}
-
-function switchToMainUI() {
-  window.setSize(750, 450);
-  window.loadURL(url.format({
-    pathname: path.join(__dirname, 'static/main-ui.pug'),
-    protocol: 'file:',
-    slashes: true
-  }));
-}
-
-function createLoginWindow() {
-  let loginWindowState = windowState({
+function createWindow() {
+  let mainWindowState = windowState({
     defaultWidth: 300,
     defaultHeight: 315
   });
   window = new BrowserWindow({
     width: 300,
     height: 315,
-    x: loginWindowState.x,
-    y: loginWindowState.y,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
     resizable: false,
     radii: [5, 5, 5, 5],
     frame: false,
@@ -109,13 +98,13 @@ function createLoginWindow() {
     icon: path.join(__dirname, 'static/images/icon.png')
   });
   window.loadURL(url.format({
-    pathname: path.join(__dirname, 'static/login.pug'),
+    pathname: path.join(__dirname, 'static/index.pug'),
     protocol: 'file:',
     slashes: true
   }));
   window.on('closed', () => {
     window = null;
   });
-  loginWindowState.manage(window);
+  mainWindowState.manage(window);
   Menu.setApplicationMenu(null);
 }

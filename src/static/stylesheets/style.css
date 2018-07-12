@@ -15,6 +15,13 @@ body {
   height: 315px;
 }
 
+#title-img {
+  display: inline-block;
+  padding: 4px 0 0 5px;
+  height: 15px;
+  width: 15px;
+}
+
 #title-bar {
   -webkit-app-region: drag;
   margin: 0px;
@@ -29,7 +36,7 @@ body {
 #title {
   display: inline-block;
   vertical-align: middle;
-  padding: 4px 0 0 5px;
+  margin-top: -6px;
   color: #fff;
   font-size: 12px;
 }
@@ -74,4 +81,13 @@ body {
 
 #exit-button:hover {
   background: #f22424;
+}
+
+#last-commit {
+  position: absolute;
+  bottom: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: white;
+  cursor: pointer;
 }
