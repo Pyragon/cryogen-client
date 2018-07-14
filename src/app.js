@@ -8,6 +8,10 @@ const path = require('path');
 const github = require('octonode');
 const setup = require('electron-pug');
 const windowState = require('electron-window-state');
+const http = require('http');
+const querystring = require('querystring');
+const fs = require('fs');
+var extend = require('util')._extend;
 var client = github.client();
 var repo = client.repo('Pyragon/cryogen-client');
 const {
@@ -18,6 +22,14 @@ const {
   ipcMain,
   session
 } = electron;
+
+const headerOptions = {
+  hostname: 'localhost',
+  port: 5555,
+  headers: {
+
+  }
+};
 
 var last_hash = null;
 
@@ -77,6 +89,133 @@ ipcMain.on('git:last-commit', () => {
       }
   });
 });
+
+ipcMain.on('client:play', () => {
+
+});
+
+ipcMain.on('client:update', () => {
+  request({
+    path: '/live/get/latest',
+    method: 'GET'
+  },
+  {},
+  (response) => {
+    if(response.error) {
+      updateClient('Error downloading', false, 'Retry', false, 'Ready to Retry');
+      return;
+    }
+    var version = response.version;
+    var path = response.path;
+    updateProgress(0.1);
+    updateClient(null, true, 'Downloading...', false, `Starting download for v${version} from ${path}`);
+    downloadClient(version, path);
+  });
+});
+
+function downloadClient(version, path) {
+
+}
+
+function updateProgress(progress) {
+  window.webContents.send('client:progress', { progress });
+}
+
+function updateClient(version, disableBtn, btnText, play, action) {
+  window.webContents.send('client:set-version', {
+    version,
+    disableBtn,
+    btnText,
+    play,
+    action
+  });
+}
+
+function download(options, data, callback) {
+  options.path = options.path+'?'+querystring.stringify(data);
+  var extended = extend(headerOptions, options);
+  var req = http.request(extended, (res) => {
+    var len = parseInt(res.headers['content-length'], 10);
+    var body = "";
+    var cur = 0;
+    var total = len / 1048576;
+    res.on('data', (chunk) => {
+      body += chunk;
+      cur += chunk.length;
+      console.log(cur / len);
+      updateProgress(cur / len);
+    });
+
+    res.on('end', () => {
+      callback(null, body);
+      updateProgress(1.0);
+    });
+
+    res.on('error', (error) => {
+      callback({
+        error
+      });
+    });
+  });
+}
+
+function request(options, data, callback, login=false) {
+  options.path = options.path+'?'+querystring.stringify(data);
+  var extended = extend(headerOptions, options);
+  var req = http.request(extended, (res) => {
+    res.setEncoding('utf8');
+    let dataChunk = '';
+    res.on('data', (chunk) => {
+      dataChunk += chunk;
+    });
+    res.on('end', () => {
+      console.log(dataChunk+"s");
+      var data = JSON.parse(dataChunk);
+      callback(data);
+    });
+  });
+  req.on('error', (e) => {
+    console.log(`Error requesting: ${e.message}`);
+    callback({
+      success: true,
+      error: e.message
+    });
+  });
+  req.write(querystring.stringify(data));
+  req.end();
+}
+
+ipcMain.on('client:check', () => {
+  var p = path.join(__dirname, '../client/props.json');
+  var r = path.resolve(__dirname, '../client/props.json');
+  if(!fs.existsSync(p)) {
+    window.webContents.send('client:check', {
+      found: false,
+      err: 'File does not exist'
+    });
+    return;
+  }
+  fs.readFile(p, { encoding: 'utf-8' }, (err, data) => {
+    if(err) {
+      window.webContents.send('client:check', {
+        found: false,
+        err
+      });
+      return;
+    }
+    var json = JSON.parse(data);
+    window.webContents.send('client:check', {
+      found: true,
+      version: json.version,
+      latest: '1.0.2',
+      location: r
+    });
+  });
+});
+
+function getLatestVersion() {
+
+}
 
 function createWindow() {
   let mainWindowState = windowState({

@@ -72,10 +72,6 @@ $(document).ready(() => {
         }
         this.user = data;
         switchToMainUI();
-        $('#wrapper').css({
-          'height': '450px',
-          'width': '750px'
-        });
       });
     });
   }

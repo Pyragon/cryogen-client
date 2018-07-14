@@ -48,6 +48,10 @@ function switchToMainUI() {
   remote.getCurrentWindow().setSize(750, 450);
   $('#main-content').html('');
   $('#main-content').load('main-ui.pug');
+  $('#wrapper').css({
+    'height': '450px',
+    'width': '750px'
+  });
 }
 
 function setTitle(title) {
