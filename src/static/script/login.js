@@ -1,9 +1,6 @@
 $(document).ready(() => {
 
-  $('#wrapper').css({
-    'width': '300px',
-    'height': '315px'
-  });
+  setSize(300, 315);
 
   //Focus on username input by default
   $('#username').focus();

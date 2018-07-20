@@ -49,12 +49,16 @@ $(document).ready(() => {
 //called from login.js - login()
 //TODO - call from login.js loginAsGuest()
 function switchToMainUI() {
-  remote.getCurrentWindow().setSize(750, 450);
+  setSize(750, 450);
   $('#main-content').html('');
   $('#main-content').load('main-ui.pug');
+}
+
+function setSize(width, height) {
+  remote.getCurrentWindow().setSize(width, height);
   $('#wrapper').css({
-    'height': '450px',
-    'width': '750px'
+    'height': `${height}px`,
+    'width': `${width}px`
   });
 }
 

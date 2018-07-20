@@ -77,10 +77,6 @@ $(document).ready(() => {
     editClientVersion(str, version, latest);
   });
 
-  $('#wrapper').css({
-    'width': '750px',
-    'height': '450px'
-  });
 
   function checkForClient() {
     ipcRenderer.send('client:check');
