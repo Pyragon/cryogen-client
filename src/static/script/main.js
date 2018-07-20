@@ -64,6 +64,7 @@ function setSize(width, height) {
 
 function setTitle(title) {
   $('#title').html(title);
+  remote.getCurrentWindow().setTitle(title);
 }
 
 //Save a cookie via electron's session object
