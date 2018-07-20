@@ -14,12 +14,19 @@ const http = require('http');
 const querystring = require('querystring');
 const pretty = require('prettysize');
 const fs = require('fs');
+var _tray = require(__dirname+'/tray/tray.js');
 var exec = require('child_process').execFile;
 var spawn = require('child_process').spawn;
 var extend = require('util')._extend;
+require('electron-reload')(__dirname, {
+  electron: require('$(__dirname)/../../node_modules/electron')
+});
+require('electron-debug')({
+  showDevTools: false,
+  enabled: true
+});
 var client = github.client();
 var repo = client.repo('Pyragon/cryogen-client');
-var plugin = this;
 const {
   app,
   BrowserWindow,
@@ -38,15 +45,14 @@ const headerOptions = {
   }
 };
 
-var last_hash = null;
+var client = function() {
 
-require('electron-reload')(__dirname, {
-  electron: require('$(__dirname)/../../node_modules/electron')
-});
-require('electron-debug')({
-  showDevTools: true,
-  enabled: true
-});
+  
+
+};
+
+
+var last_hash = null;
 
 let window;
 let tray = null;
@@ -59,10 +65,8 @@ app.on('ready', () => {
   } catch(err) {
     console.log('Error loading electron-pug:', err);
   }
-  tray = new Tray(path.join(__dirname, 'static/images/favicon.ico'));
-  tray.on('click', () => {
-
-  });
+  plugin._tray = new _tray(plugin, Tray);
+  console.log(plugin);
   createWindow();
   openProcessManager();
 });
@@ -247,6 +251,22 @@ function getLatestVersion(callback) {
   },
   {},
   callback);
+}
+
+//Request new auth token from Cryogen API
+//Does not use expiry parameter. Defaults to 3 hour duration
+//Revoke=true. Revokes any other tokens assigned to our account
+function requestAuthToken(username, password, callback) {
+  request({
+    path: '/login',
+    method: 'POST'
+  }, {
+    username: username,
+    password: password,
+    revoke: true
+  }, (response) => {
+    callback(response.error, response.token);
+  }, true);
 }
 
 function createWindow() {
