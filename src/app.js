@@ -28,6 +28,7 @@ const {
   ipcMain,
   session
 } = electron;
+const { openProcessManager } = require('electron-process-manager');
 
 const headerOptions = {
   hostname: 'localhost',
@@ -63,6 +64,7 @@ app.on('ready', () => {
 
   });
   createWindow();
+  openProcessManager();
 });
 
 app.on('window-all-closed', () => {
