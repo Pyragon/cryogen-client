@@ -12,12 +12,17 @@ var bar = new ProgressBar.Line('#container', {
   }
 });
 
+var btnAction = null;
+
 $(document).ready(() => {
 
   setTitle('Cryogen UI - Logged in as '+(user == null ? 'Guest' : user.display_name));
 
   $('#user-lett').html(user == null ? 'G' : user.display_name.charAt(0));
 
+  $('#client-btn').click(btnClick);
+
+  setSize(750, 450);
   checkForClient();
 
   ipcRenderer.send('git:last-commit');
@@ -35,7 +40,7 @@ $(document).ready(() => {
       editClientVersion(data.version);
     editClientButton(data.disableBtn, data.btnText);
     if(!data.disableBtn)
-      setButtonFunc(data.play ? playClient : updateClient);
+      setButtonFunc(data.play ? 'play' : 'update');
     setAction(data.action);
   });
 
@@ -46,13 +51,13 @@ $(document).ready(() => {
         editClientVersion('Error loading client');
         editClientButton(false, 'Download', data.err);
         setAction('Ready to Download!');
-        setButtonFunc(updateClient);
+        setButtonFunc('update');
         return;
       }
       editClientVersion('No client detected');
       editClientButton(false, 'Download');
       setAction('Ready to Download!');
-      setButtonFunc(updateClient);
+      setButtonFunc('play');
       return;
     }
     var version = data.version;
@@ -61,15 +66,15 @@ $(document).ready(() => {
     var str = 'V: '+version;
     if(version != latest) {
       str += ' - OOD';
-      editClientButton(false, 'Update', location);
+      editClientButton(false, 'Update', 'Client found at: '+location);
       setAction('Ready to Update!');
-      setButtonFunc(updateClient);
+      setButtonFunc('update');
     } else {
-      editClientButton(false, 'Play', location);
+      editClientButton(false, 'Play', 'Client found at: '+location);
       setAction('Ready to Play!');
-      setButtonFunc(playClient);
+      setButtonFunc('play');
     }
-    editClientVersion(str);
+    editClientVersion(str, version, latest);
   });
 
   $('#wrapper').css({
@@ -82,6 +87,13 @@ $(document).ready(() => {
     editClientButton(true, 'Checking...');
     setAction('Looking for client...');
     bar.animate(0.2);
+  }
+
+  function btnClick() {
+    if(btnAction == null || btnAction == 'update')
+      updateClient();
+    else
+      playClient();
   }
 
   function playClient() {
@@ -98,12 +110,15 @@ $(document).ready(() => {
     $('#action').html(`Action: ${action}`);
   }
 
-  function setButtonFunc(func) {
-    $('#client-btn').click(func);
+  function setButtonFunc(action) {
+    btnAction = action;
   }
 
-  function editClientVersion(version) {
+  function editClientVersion(version, current, latest) {
     $('#client-version').text(version);
+    if(current != latest) {
+
+    }
   }
 
   function editClientButton(disabled, title, location=null) {

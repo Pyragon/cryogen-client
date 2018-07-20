@@ -5,14 +5,18 @@ const electron = require('electron');
 const { remote, ipcRenderer } = electron;
 const app = remote.app;
 const session = remote.session;
+const shell = remote.shell;
 
 var extend = require('util')._extend;
 const http = require('http');
 const querystring = require('querystring');
 const ProgressBar = require('progressbar.js');
+var dateFormat = require('dateformat');
 
 var auth_token = null;
 var user_hash = null;
+
+var plugin = this;
 
 const headerOptions = {
   hostname: 'localhost',
@@ -138,4 +142,16 @@ function getUserData(callback) {
   },  {},  (response) => {
     callback(response.error, response.account);
   });
+}
+
+function secondsToTime (time) {
+    var sec_num = parseInt(time, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return hours+':'+minutes+':'+seconds;
 }

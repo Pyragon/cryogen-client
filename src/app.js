@@ -7,13 +7,19 @@ const url = require('url');
 const path = require('path');
 const github = require('octonode');
 const setup = require('electron-pug');
+const _request = require('request');
+const progress = require('request-progress');
 const windowState = require('electron-window-state');
 const http = require('http');
 const querystring = require('querystring');
+const pretty = require('prettysize');
 const fs = require('fs');
+var exec = require('child_process').execFile;
+var spawn = require('child_process').spawn;
 var extend = require('util')._extend;
 var client = github.client();
 var repo = client.repo('Pyragon/cryogen-client');
+var plugin = this;
 const {
   app,
   BrowserWindow,
@@ -43,6 +49,8 @@ require('electron-debug')({
 
 let window;
 let tray = null;
+
+var runnableVersion = null;
 
 app.on('ready', () => {
   try {
@@ -91,16 +99,20 @@ ipcMain.on('git:last-commit', () => {
 });
 
 ipcMain.on('client:play', () => {
+  if(plugin.runnableVersion == null) {
+    updateClient('Error running...', false, 'Retry', false, 'Error finding client version. Please restart or retry download.');
+    return;
+  }
+  window.minimize();
+  var f = require.resolve('../client/client_v'+plugin.runnableVersion+'.jar');
+  var child = spawn(f, {shell:true});
 
+  child.stdout.setEncoding('utf8');
+  child.stdout.on('data', console.log);
 });
 
 ipcMain.on('client:update', () => {
-  request({
-    path: '/live/get/latest',
-    method: 'GET'
-  },
-  {},
-  (response) => {
+  getLatestVersion((response) => {
     if(response.error) {
       updateClient('Error downloading', false, 'Retry', false, 'Ready to Retry');
       return;
@@ -113,11 +125,30 @@ ipcMain.on('client:update', () => {
   });
 });
 
-function downloadClient(version, path) {
+function downloadClient(version, clientPath) {
+  var p = path.join(__dirname, '../client/client_v'+version+'.jar');
+  var file = fs.createWriteStream(p);
+  var location = 'http://localhost:5555/live/download/'+version;
+  var test = 'http://ipv4.download.thinkbroadband.com/100MB.zip';
+  progress(_request(location), {
 
+  })
+  .on('progress', (state) => {
+    updateProgress(state.percent);
+    updateClient(`ETA: ${secondsToTime(state.time.remaining)}`, true, 'Downloading...', false, `Downloading v${version} from ${clientPath} at ${pretty(state.speed)}/s - ${parseInt(state.percent * 100)}%`);
+  }).on('error', (err) => {
+    console.log(err);
+    fs.unlink(p);
+    updateClient('Error downloading...', false, 'Retry', false, 'Error downloading latest client. Please try again later.');
+  }).on('end', () => {
+    plugin.runnableVersion = version;
+    updateClient('v'+version, false, 'Play', true, `Finished downloading v${version} from ${clientPath}.`);
+    updateProperties(version, clientPath);
+  }).pipe(file);
 }
 
 function updateProgress(progress) {
+  window.setProgressBar(progress);
   window.webContents.send('client:progress', { progress });
 }
 
@@ -131,31 +162,16 @@ function updateClient(version, disableBtn, btnText, play, action) {
   });
 }
 
-function download(options, data, callback) {
-  options.path = options.path+'?'+querystring.stringify(data);
-  var extended = extend(headerOptions, options);
-  var req = http.request(extended, (res) => {
-    var len = parseInt(res.headers['content-length'], 10);
-    var body = "";
-    var cur = 0;
-    var total = len / 1048576;
-    res.on('data', (chunk) => {
-      body += chunk;
-      cur += chunk.length;
-      console.log(cur / len);
-      updateProgress(cur / len);
-    });
-
-    res.on('end', () => {
-      callback(null, body);
-      updateProgress(1.0);
-    });
-
-    res.on('error', (error) => {
-      callback({
-        error
-      });
-    });
+function updateProperties(version, clientPath) {
+  var data = {
+    version:version.toString(),
+    path:clientPath,
+    dateDownloaded:new Date().getTime()
+  };
+  var p = path.join(__dirname, '../client/props.json');
+  fs.writeFile(p, JSON.stringify(data), (error) => {
+    if(error)
+      console.log('Error updating properties file: '+error);
   });
 }
 
@@ -169,7 +185,6 @@ function request(options, data, callback, login=false) {
       dataChunk += chunk;
     });
     res.on('end', () => {
-      console.log(dataChunk+"s");
       var data = JSON.parse(dataChunk);
       callback(data);
     });
@@ -187,7 +202,7 @@ function request(options, data, callback, login=false) {
 
 ipcMain.on('client:check', () => {
   var p = path.join(__dirname, '../client/props.json');
-  var r = path.resolve(__dirname, '../client/props.json');
+  var r = path.resolve(__dirname, '../client/');
   if(!fs.existsSync(p)) {
     window.webContents.send('client:check', {
       found: false,
@@ -204,17 +219,29 @@ ipcMain.on('client:check', () => {
       return;
     }
     var json = JSON.parse(data);
-    window.webContents.send('client:check', {
-      found: true,
-      version: json.version,
-      latest: '1.0.2',
-      location: r
+    plugin.runnableVersion = json.version;
+    getLatestVersion((response) => {
+      if(response.error) {
+        updateClient('Error loading...', false, 'Retry', false, 'Error getting latest client version. Please try again later.');
+        return;
+      }
+      window.webContents.send('client:check', {
+        found: true,
+        version: json.version,
+        latest: response.version,
+        location: r
+      });
     });
   });
 });
 
-function getLatestVersion() {
-
+function getLatestVersion(callback) {
+  request({
+    path: '/live/get/latest',
+    method: 'GET'
+  },
+  {},
+  callback);
 }
 
 function createWindow() {
@@ -246,4 +273,16 @@ function createWindow() {
   });
   mainWindowState.manage(window);
   Menu.setApplicationMenu(null);
+}
+
+function secondsToTime (time) {
+    var sec_num = parseInt(time, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return hours+':'+minutes+':'+seconds;
 }
