@@ -32,8 +32,90 @@
   font-size: 12px;
 }
 
+#news-title, #updates-title {
+  float: left;
+  margin-left: 20px;
+  margin-top: 10px;
+  width: 200px;
+  height: 20px;
+  vertical-align: middle;
+  color: white;
+  border-bottom: 1px solid #FFF;
+}
+
+#updates-title {
+  position: absolute;
+  left: 240px;
+  top: 24px;
+  width: 300px;
+}
+
+#updates-mask {
+  position: absolute;
+  top:54px;
+  left: 460px;
+  width: 100px;
+  height: 1px;
+  background-color: #333;
+}
+
+#news-error, #updates-error {
+  margin-left: 10px;
+  color: #888;
+  font-size: 14px;
+  width: 200px;
+}
+
+#news, #updates {
+  clear: both;
+  width: 200px;
+  margin-left: 20px;
+}
+
+#updates {
+  position: absolute;
+  left: 240px;
+  top: 80px;
+}
+
+.news-post, .update {
+  clear: both;
+  border: 1px solid #111;
+  /* background-color: #124d70; */
+  background-color: #222;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 0 20px 0 #000000;
+  box-shadow: 0 0 20px 0 #000000;
+  -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.update:first-of-type {
+  margin-top: 0px;
+}
+
+.news-title, .update-title {
+  margin-top: 4px;
+  margin-left: 4px;
+  color: white;
+  text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+  font-weight: 300;
+  font-size: 13px;
+}
+
+.news-author, .update-author {
+  margin-top: -10px;
+  margin-left: 10px;
+  color: white;
+  font-size: 12px;
+}
+
 #user-area {
-  margin-left: 690px;
+  float: right;
+  margin-right: 10px;
   margin-top: 10px;
   border: 1px solid #0e3851;
   height: 45px;

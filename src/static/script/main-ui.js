@@ -23,7 +23,10 @@ $(document).ready(() => {
   $('#client-btn').click(btnClick);
 
   setSize(750, 450);
+
   checkForClient();
+  loadLatestThreads();
+  loadLatestUpdates();
 
   ipcRenderer.send('git:last-commit');
 
@@ -77,6 +80,81 @@ $(document).ready(() => {
     editClientVersion(str, version, latest);
   });
 
+  function loadLatestThreads() {
+    request({
+      path: '/forums/posts',
+      method: 'GET'
+    }, {
+      filter: 'latest',
+      limit: 3
+    }, (response) => {
+      if(response.error || response.success == false) {
+        $('#news-error').html('- '+response.error);
+        $('#news').empty();
+        return;
+      }
+      $('#news-error').html('');
+      for(var i = 0; i < response.threads.length; i++) {
+        var thread = response.threads[i];
+        var news = $('<div></div>');
+        var title = $('<p></p>');
+        var author = $('<p></p>');
+        news.addClass('news-post');
+        title.addClass('news-title');
+        author.addClass('news-author');
+        title.html(thread.subject);
+        var authorline = 'Posted ';
+        authorline += dateFormat(new Date(thread.dateline*1000), 'mmmm dS, yyyy');
+        authorline += ' By '+thread.formattedName;
+        author.html(authorline);
+        news.append(title);
+        news.append(author);
+        $('#news').append(news);
+      }
+    });
+  }
+
+  function loadLatestUpdates() {
+    request({
+      path: '/updates',
+      method: 'GET'
+    }, {
+      limit: 4
+    },
+    (response) => {
+      if(response.error || response.success == false) {
+        $('#updates-error').html('- '+response.error);
+        $('#updates').empty();
+        return;
+      }
+      console.log(response.commits.length);
+      $('#updates-error').html('');
+      for(var i = 0; i < response.commits.length; i++) {
+        var commit = response.commits[i];
+        var update = $('<div></div>');
+        var title = $('<p></p>');
+        var author = $('<p></p>');
+        update.addClass('update');
+        title.addClass('update-title');
+        author.addClass('update-author');
+        var titleline = commit.commit_message;
+        if(titleline.length > 33) {
+          title.prop('title', commit.commit_message);
+          titleline = titleline.substring(0, 33);
+          titleline += '...';
+        }
+        title.html(titleline);
+        var authorline = 'Posted ';
+        authorline += dateFormat(new Date(commit.date), 'mmmm dS, yyyy');
+        authorline += ' By '+commit.author;
+        author.html(authorline);
+        update.append(title);
+        update.append(author);
+        console.log(authorline);
+        $('#updates').append(update);
+      }
+    });
+  }
 
   function checkForClient() {
     ipcRenderer.send('client:check');
