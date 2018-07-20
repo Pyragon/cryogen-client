@@ -21,6 +21,8 @@ $(document).ready(() => {
       $('#username').val(cookie.value);
       //Focus password input as we now have a username
       $('#password').focus();
+      //Set remember_me checked
+      $('#remember-check').prop('checked', true);
     }
   });
 
@@ -72,7 +74,13 @@ $(document).ready(() => {
       }
       auth_token = token;
       if(remember)
-        saveCookie('login-name', username);
+        saveCookie('login-name', username, (err) => {
+          if(err) console.log('Error saving remember_me cookie.');
+        });
+      else
+        removeCookie('login-name', () => {
+
+        });
       ipcRenderer.send('login:set-token', token);
       getUserData((error, data) => {
         if(error) {

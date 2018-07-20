@@ -71,21 +71,24 @@ function setTitle(title) {
 //Name: Name of cookie
 //Value: Value of cookie
 //URL='http://localhost': Assigning url of cookie automatically
-function saveCookie(name, value) {
+//Callback(error): Callback that is executed on completion/error
+function saveCookie(name, value, callback) {
   var date = new Date();
-  date.setHours(date.getHours() + 24);
+  date.setHours(date.getHours() + 23);
   session.defaultSession.cookies.set({
     url: 'http://localhost',
     name: name,
     value: value,
     session: true,
     expirationDate: date.getTime()
-  }, (error) => {
-    if(error) {
-      console.log('Error saving cookie data!');
-      console.log(error);
-    }
-  });
+  }, callback);
+}
+
+//Remove a cookie via electrion's session object
+//Name: Name of cookie
+//Callback: Callback that is executed on completion
+function removeCookie(name, callback) {
+  session.defaultSession.cookies.remove('http://localhost', name, callback);
 }
 
 //Request from Cryogen API
