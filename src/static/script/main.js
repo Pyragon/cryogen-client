@@ -110,8 +110,22 @@ function request(options, data, callback, login=false) {
       dataChunk += chunk;
     });
     res.on('end', () => {
-      var data = JSON.parse(dataChunk);
-      callback(data);
+      var data = "";
+      try {
+        data = JSON.parse(dataChunk);
+      } catch(e) {
+        console.log('Error occurred in JSON: '+dataChunk);
+        console.log('Path taken: '+options.path);
+        callback(e);
+        return;
+      }
+      try {
+        callback(data);
+      } catch(e) {
+        console.log('Error occured in callback: '+callback);
+        console.log('Error: '+e);
+        callback(e);
+      }
     });
   });
   req.on('error', (e) => {
