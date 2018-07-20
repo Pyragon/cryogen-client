@@ -24,6 +24,8 @@ $(document).ready(() => {
     }
   });
 
+  //Register forgotten-password button
+  $(document).on('click', '#forgot-pass', forgotPassword);
   //Register login button
   $(document).on('click', '#login-button', login);
   //Register keypress for username and password inputs
@@ -42,10 +44,20 @@ $(document).ready(() => {
     }
   });
 
+  //Shake window and set error text
   function setError(error) {
     $('#wrapper').effect('shake');
     $('#login-error').css('display', 'block');
     $('#login-error').text(error);
+  }
+
+  //Redirect to website's recovery page
+  function forgotPassword() {
+    var username = $('#username').val();
+    var url = 'http://cryogen.live/recover';
+    if(username)
+      url += '?username='+username;
+    shell.openExternal(url);
   }
 
   //Request Authentication token from Cryogen API
