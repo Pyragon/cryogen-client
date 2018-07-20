@@ -83,18 +83,21 @@ ipcMain.on('git:last-commit', () => {
     return;
   }
   var commits = repo.commits((error, body, headers) => {
+      var hash = '';
       if(error) {
-        console.log('Error getting commits: '+error);
-        return;
+        console.log('Error getting latest commit: '+error);
+        hash = 'Error connecting to Github.';
+      } else {
+        if(body.length > 0) {
+          var last = body[0];
+          var message = last.commit.message;
+          last_hash = message;
+          hash = message;
+        }
       }
-      if(body.length > 0) {
-        var last = body[0];
-        var message = last.commit.message;
-        last_hash = message;
-        window.webContents.send('git:last-commit', {
-          commit: message
-        });
-      }
+      window.webContents.send('git:last-commit', {
+        commit: hash
+      });
   });
 });
 
