@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/Pyragon/cryogen-client#readme",
   "dependencies": {
-    "electron": "^2.0.4",
+    "electron": "^2.0.5",
     "electron-debug": "^2.0.0",
     "electron-pug": "^2.0.0",
     "electron-reload": "^1.2.5",
