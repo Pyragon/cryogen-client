@@ -69,6 +69,8 @@ $(document).ready(() => {
     var remember = $('#remember-check').prop('checked');
     requestAuthToken(username, password, (error, token) => {
       if(error) {
+        if(error === 'connect ECONNREFUSED 127.0.0.1:5555')
+          error = 'Error connecting to server.';
         setError(error);
         return;
       }
