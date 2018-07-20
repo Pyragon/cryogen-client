@@ -28,6 +28,8 @@ $(document).ready(() => {
 
   //Register forgotten-password button
   $(document).on('click', '#forgot-pass', forgotPassword);
+  //Register continue-as-guest button
+  $(document).on('click', '#cont-guest', switchToMainUI);
   //Register login button
   $(document).on('click', '#login-button', login);
   //Register keypress for username and password inputs

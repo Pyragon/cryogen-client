@@ -47,7 +47,7 @@ $(document).ready(() => {
 
 //load the main ui html into main-content div
 //called from login.js - login()
-//TODO - call from login.js loginAsGuest()
+//login.js #cont-guest.click
 function switchToMainUI() {
   setSize(750, 450);
   $('#main-content').html('');
