@@ -87,7 +87,7 @@ $(document).ready(() => {
           console.log('Error loading user data: '+error);
           return;
         }
-        this.user = data;
+        plugin.user = data;
         switchToMainUI();
       });
     });
