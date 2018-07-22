@@ -7,7 +7,7 @@ var _properties = function() {
 
   return {
 
-    saveProperties: () => {
+    saveProperties: (callback) => {
       var p = app.getPath('userData') + '/props.json';
       if (!fs.existsSync(app.getPath('userData')))
         fs.mkdirSync(app.getPath('userData'));
@@ -18,7 +18,7 @@ var _properties = function() {
       });
     },
 
-    loadProperties: () => {
+    loadProperties: (callback) => {
       var defaults = require(__dirname + "/defaults.js");
       try {
         if (!fs.existsSync(app.getPath('userData')))
@@ -27,15 +27,20 @@ var _properties = function() {
         fs.readFile(p, (error, data) => {
           if (error) {
             config = defaults;
-            this.saveProperties();
+            this.saveProperties(() => {
+              callback(config);
+            });
             return;
           }
           config = Object.assign(defaults, JSON.parse(data));
+          callback(config);
         });
       } catch (error) {
         console.log(error);
         config = defaults;
-        this.saveProperties();
+        this.saveProperties(() => {
+          callback(config);
+        });
         //TODO - popup error stating defaults being set
       }
     },

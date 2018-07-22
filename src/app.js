@@ -38,6 +38,8 @@ var Cryogen = (function() {
   var tray;
   var properties;
 
+  var config;
+
   function startElectron() {
 
     app.on('ready', () => {
@@ -45,7 +47,9 @@ var Cryogen = (function() {
         pretty: true
       }, {});
       properties = _properties();
-      properties.loadProperties();
+      properties.loadProperties((configD) => {
+        config = configD;
+      });
       // openProcessManager();
       createWindow();
       //tray = _tray(this, Tray);
