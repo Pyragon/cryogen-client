@@ -5,6 +5,7 @@ const url = require('url');
 const path = require('path');
 const setupPug = require('electron-pug');
 const windowState = require('electron-window-state');
+const _properties = require(__dirname + '/props/properties.js');
 const {
   openProcessManager
 } = require('electron-process-manager');
@@ -35,6 +36,7 @@ var Cryogen = (function() {
   var api;
   var window;
   var tray;
+  var properties;
 
   function startElectron() {
 
@@ -42,7 +44,9 @@ var Cryogen = (function() {
       setupPug({
         pretty: true
       }, {});
-      //openProcessManager();
+      properties = _properties();
+      properties.loadProperties();
+      // openProcessManager();
       createWindow();
       //tray = _tray(this, Tray);
       registerNotifications();
