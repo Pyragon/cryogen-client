@@ -6,6 +6,7 @@ const http = require('http');
 const querystring = require('querystring');
 const extend = require('util')._extend;
 const pretty = require('prettysize');
+const app = require('electron').app;
 
 var _api = function(cryogen, client) {
 
@@ -30,8 +31,8 @@ var _api = function(cryogen, client) {
     },
 
     downloadClient: function(version, clientPath) {
-      var p = path.join(__dirname, '../client/client_v' + version + '.jar');
-      var d = path.join(__dirname, '../client/');
+      var p = path.join(app.getPath('userData'), '/client/client_v' + version + '.jar');
+      var d = path.join(app.getPath('userData'), '/client/');
       if (!fs.existsSync(d))
         fs.mkdirSync(d);
       var file = fs.createWriteStream(p);

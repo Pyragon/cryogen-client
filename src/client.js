@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const _api = require(__dirname + '/api.js');
 var spawn = require('child_process').spawn;
+const app = require('electron').app;
 
 var _client = function(cryogen) {
 
@@ -38,8 +39,8 @@ var _client = function(cryogen) {
           return;
         }
         cryogen.getWindow().minimize();
-        var f = require.resolve('../client/client_v' + localVersion + '.jar');
-        var child = spawn(f, {
+        var p = path.join(app.getPath('userData'), '/client/client_v' + localVersion + '.jar');
+        var child = spawn(p, {
           shell: true
         });
 
@@ -54,7 +55,7 @@ var _client = function(cryogen) {
         path: clientPath,
         dateDownloaded: new Date().getTime()
       };
-      var p = path.join(__dirname, '../client/props.json');
+      var p = path.join(app.getPath('userData'), '/client/props.json');
       fs.writeFile(p, JSON.stringify(data), (error) => {
         if (error)
           console.log('Error updating properties file: ' + error);
@@ -81,8 +82,8 @@ var _client = function(cryogen) {
         cryogen.sendMessage('client:check', data);
       }
 
-      var p = path.join(__dirname, '../client/props.json');
-      var r = path.resolve(__dirname, '../client/');
+      var p = path.join(app.getPath('userData'), '/client/props.json');
+      var r = path.resolve(app.getPath('userData'), '/client/');
       if (!fs.existsSync(p)) {
         respond({
           found: false,
