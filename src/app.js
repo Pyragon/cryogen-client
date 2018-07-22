@@ -5,11 +5,13 @@ const url = require('url');
 const path = require('path');
 const setupPug = require('electron-pug');
 const windowState = require('electron-window-state');
-const { openProcessManager } = require('electron-process-manager');
-var _tray = require(__dirname+'/tray/tray.js');
-var _github = require(__dirname+'/github.js');
-var _client = require(__dirname+'/client.js');
-var _api = require(__dirname+'/api.js');
+const {
+  openProcessManager
+} = require('electron-process-manager');
+var _tray = require(__dirname + '/tray/tray.js');
+var _github = require(__dirname + '/github.js');
+var _client = require(__dirname + '/client.js');
+var _api = require(__dirname + '/api.js');
 // require('electron-reload')(__dirname, {
 //   electron: require('$(__dirname)/../../node_modules/electron')
 // });
@@ -37,31 +39,42 @@ var Cryogen = (function() {
   function startElectron() {
 
     app.on('ready', () => {
-      setupPug({pretty:true},{});
-      openProcessManager();
+      setupPug({
+        pretty: true
+      }, {});
+      //openProcessManager();
       createWindow();
       //tray = _tray(this, Tray);
       registerNotifications();
     });
 
     app.on('window-all-closed', () => {
-      if(process.platform !== 'darwin')
+      if (process.platform !== 'darwin')
         app.quit();
     });
 
     app.on('activate', () => {
-      if(window === null)
+      if (window === null)
         createWindow();
     });
 
   }
 
+  function sendMessage(opcode, data) {
+    window.webContents.send(opcode, data);
+  }
+
   function registerNotifications() {
 
-    ipcMain.on('git:last-commit', (data) => github.respond('last-commit', data));
+    ipcMain.on('login:get-token', (event, data) => sendMessage('login:set-token', api.getAuthToken()));
+    ipcMain.on('login:set-token', (event, data) => api.setAuthToken(data.token));
+    ipcMain.on('git:last-commit', (event, data) => github.respond('last-commit', data));
     ipcMain.on('client:play', client.play);
     ipcMain.on('client:update', client.update);
     ipcMain.on('client:check', client.checkForLocal);
+    ipcMain.on('bar:animate', (event, data) => {
+      updateProgress(data.progress, true);
+    });
 
   }
 
@@ -85,7 +98,7 @@ var Cryogen = (function() {
           title: 'Login to Cryogen',
           iconUrl: 'http://cryogen.live/images/icon.png'
         });
-      } catch(e) {
+      } catch (e) {
         console.log(e);
       }
       console.log(path.join(__dirname, '/static/images/favicon.ico'));
@@ -99,9 +112,18 @@ var Cryogen = (function() {
       });
       mainWindowState.manage(window);
       Menu.setApplicationMenu(null);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
+  }
+
+  function updateProgress(progress, fromRender = false) {
+    console.log(progress);
+    window.setProgressBar(progress == 1 ? 0 : progress);
+    if (!fromRender)
+      window.webContents.send('client:progress', {
+        progress
+      });
   }
 
   return {
@@ -117,9 +139,8 @@ var Cryogen = (function() {
       startElectron();
     },
 
-    updateProgress: function(progress) {
-      window.setProgressBar(progress);
-      window.webContents.send('client:progress', { progress });
+    updateProgress: (progress) => {
+      updateProgress(progress);
     },
 
     updateClient: function(version, disableBtn, btnText, play, action) {
@@ -132,10 +153,7 @@ var Cryogen = (function() {
       });
     },
 
-    sendMessage: function(opcode, data) {
-      window.webContents.send(opcode, data);
-      console.log(`Sending message: ${opcode}:${JSON.stringify(data)}`)
-    },
+    sendMessage: (opcode, data) => sendMessage(opcode, data),
 
     getWindow: function() {
       return window;
