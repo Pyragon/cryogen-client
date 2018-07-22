@@ -32,36 +32,6 @@
   font-size: 12px;
 }
 
-#first-title, #second-title, #third-title {
-  float: left;
-  margin-left: 20px;
-  margin-top: 10px;
-  width: 180px;
-  height: 20px;
-  vertical-align: middle;
-  color: white;
-  border-bottom: 1px solid #FFF;
-}
-
-#second-title {
-  position: absolute;
-  left: 220px;
-  top: 24px;
-}
-
-#third-title {
-  position: absolute;
-  left: 430px;
-  top: 24px;
-}
-
-#first-error, #second-error, #third-error {
-  margin-left: 10px;
-  color: #888;
-  font-size: 14px;
-  width: 200px;
-}
-
 #first, #second, #third {
   clear: both;
   width: 200px;
