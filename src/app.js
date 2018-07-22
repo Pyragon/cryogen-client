@@ -109,7 +109,6 @@ var Cryogen = (function() {
       } catch (e) {
         console.log(e);
       }
-      console.log(path.join(__dirname, '/static/images/favicon.ico'));
       window.loadURL(url.format({
         pathname: path.join(__dirname, '/static/index.pug'),
         protocol: 'file:',
