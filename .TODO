@@ -3,16 +3,15 @@ https://atom.io/packages/tasks
 Overall:
   ✔ Auto-updating client created in node.js and express @done(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
   ✘ Load JAR into node in client (hopefully, otherwise just have it run the jar) @cancelled(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
-  ☐ Sits in background and taskbar and can listen for events to your acc
   ☐ Create plugin system for the client that exposes an api with client data
   Packaging:
-    ☐ Check how directory for props.json and clientv*.jar will function when packaged
+    ✔ Check how directory for props.json and clientv*.jar will function when packaged @done(2018-07-22 05:59) @project(Overall / Packaging)
     ☐ Create own installer
     ☐ Ensure proper signing of installer to avoid 'Unsafe program' warning on windows
   Preferences:
     ☐ Popup modal from right-click on user-area
     Impl:
-      ☐ Launch of Startup
+      ☐ Launch on Startup
       ☐ Auto login (Insecure method that will store user/pass on computer)
       ☐ Location to download client (Default to /Downloads)
       API Settings (Advanced):
@@ -32,11 +31,15 @@ Overall:
   Main-UI:
     ✔ Load latest news threads from Cryogen API @done(2018-07-19 13:37) @project(Overall / Main-UI)
     ✔ Load latest updates for server, website, and client from Cryogen API @done(2018-07-19 13:37) @project(Overall / Main-UI)
-    ☐ Create 'widget' system to display 2-3 widgets on main client page
+    ✔ Create 'widget' system to display 2-3 widgets on main client page @done(2018-07-23 00:28) @project(Overall / Main-UI)
     ☐ Periodically check for updates/client existance. (Just in case)
     ☐ Right click options on button to reveal more (Reinstall, Find client path, open client path, etc)
+    Plugins System:
+      ✔ Plugins loaded from node modules installed in AppData @done(2018-07-22 06:00) @project(Overall / Main-UI / Plugins System)
+      ✔ Load plugins onto UI based on positions in config file @done(2018-07-22 06:01) @project(Overall / Main-UI / Plugins System)
+      ☐ Check what's exposed by plugin system and work on security for it
     Widgets:
-      ☐ Latest News
+      ✔ Latest News @done(2018-07-23 00:26) @project(Overall / Main-UI / Widgets)
       ☐ Latest Updates
       ☐ Highscores
       In-game Chat:
