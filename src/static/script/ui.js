@@ -4,11 +4,13 @@ var dateFormat = require('dateformat');
 
 const electron = require('electron');
 const renderer = electron.ipcRenderer;
+const _plugins = require(__dirname + '/script/plugins.js');
 
 var ui = function() {
 
   var bar;
   var main;
+  var plugins;
 
   var user;
 
@@ -173,6 +175,9 @@ var ui = function() {
     init: function() {
       main = _main(this);
       main.init();
+      plugins = _plugins(main);
+      plugins.init();
+      main.setPluginManager(plugins);
       main.setSize(750, 450);
       $(this.start);
     }

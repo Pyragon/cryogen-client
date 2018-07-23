@@ -15,6 +15,7 @@ var _main = function(module) {
 
   var auth_token;
   var auth_expiry;
+  var pluginManager;
 
   const headerOptions = {
     hostname: 'localhost',
@@ -41,17 +42,21 @@ var _main = function(module) {
 
     setAuthToken: (token) => {
       auth_token = token;
-      renderer.send('login:set-token', { token });
+      renderer.send('login:set-token', {
+        token
+      });
     },
 
-    getAuthToken: () => { return auth_token; },
+    getAuthToken: () => {
+      return auth_token;
+    },
 
     getCookie: (name, callback) => {
       session.defaultSession.cookies.get({
         url: 'http://localhost',
         name
       }, (error, cookies) => {
-        if(error) {
+        if (error) {
           callback(error);
           return;
         }
@@ -70,7 +75,7 @@ var _main = function(module) {
         session: true,
         expirationDate: date.getTime()
       }, (error) => {
-        if(error) console.error(error);
+        if (error) console.error(error);
       });
     },
 
@@ -91,10 +96,18 @@ var _main = function(module) {
       remote.getCurrentWindow().setTitle(title);
     },
 
+    setPluginManager: (manager) => {
+      pluginManager = manager;
+    },
+
+    getPluginManager: () => {
+      return pluginManager;
+    },
+
     request: (options, data, callback) => {
-      if(auth_token && auth_expiry > new Date().getTime())
+      if (auth_token && auth_expiry > new Date().getTime())
         data.token = auth_token;
-      options.path = options.path+'?'+querystring.stringify(data);
+      options.path = options.path + '?' + querystring.stringify(data);
       var extended = extend(headerOptions, options);
       var req = http.request(extended, (res) => {
         res.setEncoding('utf8');
@@ -106,17 +119,17 @@ var _main = function(module) {
           var data = "";
           try {
             data = JSON.parse(dataChunk);
-          } catch(e) {
-            console.log('Error occurred in JSON: '+dataChunk);
-            console.log('Path taken: '+options.path);
+          } catch (e) {
+            console.log('Error occurred in JSON: ' + dataChunk);
+            console.log('Path taken: ' + options.path);
             callback(e);
             return;
           }
           try {
             callback(data);
-          } catch(e) {
-            console.log('Error occured in callback: '+callback);
-            console.log('Error: '+e);
+          } catch (e) {
+            console.log('Error occured in callback: ' + callback);
+            console.log('Error: ' + e);
             callback(e);
           }
         });
