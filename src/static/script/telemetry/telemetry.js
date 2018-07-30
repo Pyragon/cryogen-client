@@ -5,6 +5,7 @@ const fs = require('fs');
 var _telemetry = () => {
 
   var subscriptions = [];
+  var replaced = [];
 
   function loadServer() {
     express = _express();
@@ -92,9 +93,14 @@ var _telemetry = () => {
           var sub;
           if (subscriptions[event.name]) {
             sub = subscriptions[event.name];
-            sub.callbacks.push(cb);
+            if (event.replace && !replaced[event.name]) {
+              sub.callbacks = [];
+              sub.callbacks.push(cb);
+              replaced[event.name] = true;
+            } else
+              sub.callbacks.push(cb);
             subscriptions[event.name] = sub;
-          } else {
+          } else if (!replaced[event.name]) {
             sub = {
               callbacks: []
             };
