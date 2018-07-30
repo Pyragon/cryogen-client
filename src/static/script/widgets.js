@@ -12,17 +12,14 @@ var _widgets = function() {
   var intervals = [];
 
   function loadWidgets() {
-    renderer.on('widgets:load', (event, data) => {
-      for (var i = 0; i < 3; i++) {
-        if (data[i] == null || position[data[i].position]) continue;
-        var widget = data[i];
-        positions[widget.name] = widget.position;
-        position[widget.position] = true;
-        loadWidget(widget);
-      }
-
-    });
-    renderer.send('widgets:load');
+    var data = config.widgets;
+    for (var i = 0; i < 3; i++) {
+      if ([i] == null || position[data[i].position]) continue;
+      var widget = data[i];
+      positions[widget.name] = widget.position;
+      position[widget.position] = true;
+      loadWidget(widget);
+    }
   }
 
   function reloadWidgets() {

@@ -26,8 +26,7 @@ const {
   BrowserWindow,
   Menu,
   ipcMain,
-  session,
-  Notification
+  session
 } = electron;
 
 var Cryogen = (function() {
@@ -52,6 +51,7 @@ var Cryogen = (function() {
       properties = _properties();
       properties.loadProperties((configD) => {
         config = configD;
+        global.config = config;
       });
       // openProcessManager();
       createWindow();

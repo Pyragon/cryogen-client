@@ -4,12 +4,10 @@ var _plugins = () => {
   var intervals = [];
 
   function loadPlugins() {
-    renderer.on('plugins:load', (event, data) => {
-      for (var i = 0; i < data.length; i++) {
-        loadPlugin(data[i]);
-      }
-    });
-    renderer.send('plugins:load');
+    var data = config.plugins;
+    for (var i = 0; i < data.length; i++) {
+      loadPlugin(data[i]);
+    }
   }
 
   function loadPlugin(data) {

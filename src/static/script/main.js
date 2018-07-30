@@ -31,6 +31,8 @@ var authExpiry;
 var lastDataCheck;
 var lastHash;
 
+var config;
+
 $(document).ready(() => start());
 
 function registerGithub(callback) {
@@ -46,12 +48,12 @@ function start() {
   $('#minimize-button').click(() => remote.getCurrentWindow().minimize());
   $('#exit-button').click(() => app.quit());
   renderer.on('log', (event, data) => console.log(data.message));
+  config = remote.getGlobal('config');
   login = _login();
   plugins = _plugins();
   ui = _ui();
   login.init();
   plugins.init();
-  console.log('starting');
 }
 
 function setSize(width, height) {
