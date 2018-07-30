@@ -82,6 +82,7 @@ var Cryogen = (function() {
     ipcMain.on('login:set-token', (event, data) => api.setAuthToken(data.token, data.expiry));
     ipcMain.on('git:last-commit', (event, data) => github.respond('last-commit', data));
     ipcMain.on('widgets:load', (event, data) => sendMessage('widgets:load', config.widgets));
+    ipcMain.on('plugins:load', (event, data) => sendMessage('plugins:load', config.plugins));
     ipcMain.on('client:play', client.play);
     ipcMain.on('client:update', client.update);
     ipcMain.on('client:check', client.checkForLocal);

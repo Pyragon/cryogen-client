@@ -33,8 +33,6 @@ var lastHash;
 
 $(document).ready(() => start());
 
-start();
-
 function registerGithub(callback) {
   renderer.send('git:last-commit');
   renderer.on('git:last-commit', (event, data) => {
@@ -53,6 +51,7 @@ function start() {
   ui = _ui();
   login.init();
   plugins.init();
+  console.log('starting');
 }
 
 function setSize(width, height) {

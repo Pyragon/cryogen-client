@@ -5,8 +5,8 @@ var _plugins = () => {
 
   function loadPlugins() {
     renderer.on('plugins:load', (event, data) => {
-      for (var i = 0; i < data.pluginData.length; i++) {
-        loadPlugin(data.pluginData[i]);
+      for (var i = 0; i < data.length; i++) {
+        loadPlugin(data[i]);
       }
     });
     renderer.send('plugins:load');
@@ -24,7 +24,7 @@ var _plugins = () => {
     }
     plugin.init(data.config);
     plugins[data.name] = plugin;
-    intervals[data.name] = setInterval(plugin.update, plugin.getDelay);
+    intervals[data.name] = setInterval(plugin.update, plugin.getDelay());
     plugin.update();
   }
 
