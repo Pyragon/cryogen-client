@@ -4,6 +4,7 @@ Overall:
   ✔ Auto-updating client created in node.js and express @done(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
   ✘ Load JAR into node in client (hopefully, otherwise just have it run the jar) @cancelled(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
   ☐ Create plugin system for the client that exposes an api with client data
+  ☐ Figure out how to use HTML5 Notifications with service-worker
   Packaging:
     ✔ Check how directory for props.json and clientv*.jar will function when packaged @done(2018-07-22 05:59) @project(Overall / Packaging)
     ☐ Create own installer
@@ -16,13 +17,17 @@ Overall:
       ☐ Location to download client (Default to /Downloads)
       API Settings (Advanced):
         ☐ Token expiry time
+  Telemetry Event:
+    ☐ Notify on server restart that Telemetry events will soon go offline
+    ☐ Check for when server is back online and register events again
+    ☐ Register any events that were submitted while offline
   Context Menu System:
     ☐ Either use electron-context-menu and add ability to style or
     ☐ Create context-menu system that can be styled, and sent params depending on what you click on
   Tray System:
     ✔ Sits in Tray @done(2018-07-19 13:40) @project(Overall / Tray System)
-    ☐ Listen for events from Cryogen API
-    ☐ Popup Bubble for notifications
+    ✔ Listen for events from Cryogen API @done(2018-07-27 00:19) @project(Overall / Tray System)
+    ✔ Popup Bubble for notifications @done(2018-07-27 00:20) @project(Overall / Tray System)
   Login Page:
     ☐ Possibly a second 'insecure' option to just auto-login (Will save hashed pass on computer)
     ☐ Decide whether to refresh token when expired, or require login again
@@ -40,7 +45,8 @@ Overall:
       ☐ Check what's exposed by plugin system and work on security for it
     Widgets:
       ✔ Latest News @done(2018-07-23 00:26) @project(Overall / Main-UI / Widgets)
-      ☐ Latest Updates
+      ✔ Latest Updates @done(2018-07-23 01:21) @project(Overall / Main-UI / Widgets)
+      ✔ Telemetry Events Example @done(2018-07-30 01:49) @project(Overall / Main-UI / Widgets)
       ☐ Highscores
       In-game Chat:
         ☐ Private Messages
