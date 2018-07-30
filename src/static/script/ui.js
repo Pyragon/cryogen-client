@@ -149,6 +149,8 @@ var _ui = function() {
     start: function() {
       loadBar();
       registerGithub();
+      widgets = _widgets();
+      widgets.init();
       getUserData((data) => {
         console.log(data);
         registerNotifications(data);
@@ -163,8 +165,6 @@ var _ui = function() {
       setSize(750, 450);
       $('#main-content').html('');
       $('#main-content').load('ui.pug', () => ui.start());
-      widgets = _widgets();
-      widgets.init();
       telemetry = _telemetry();
       telemetry.init();
     },
