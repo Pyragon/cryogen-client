@@ -43,6 +43,8 @@ Overall:
       ✔ Widgets loaded from node modules installed in AppData @done(2018-07-22 06:00) @project(Overall / Main-UI / Widgets System)
       ✔ Load widgets onto UI based on positions in config file @done(2018-07-22 06:01) @project(Overall / Main-UI / Widgets System)
       ☐ Check what's exposed by widget system and work on security for it
+    Plugin System:
+      ☐ Generally the same as widgets, except they don't display anything by default
     Widgets:
       ✔ Latest News @done(2018-07-23 00:26) @project(Overall / Main-UI / Widgets)
       ✔ Latest Updates @done(2018-07-23 01:21) @project(Overall / Main-UI / Widgets)

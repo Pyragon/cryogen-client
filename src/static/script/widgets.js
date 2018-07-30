@@ -68,7 +68,7 @@ var _widgets = function() {
 
       head.appendChild(link);
     }
-    intervals[name] = setInterval(widget.update, widget.getDelay());
+    intervals[data.name] = setInterval(widget.update, widget.getDelay());
     widget.update();
     container.html(widget.getDom());
   }

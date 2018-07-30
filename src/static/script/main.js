@@ -11,6 +11,7 @@ const querystring = require('querystring');
 
 var _login = require(__dirname + '/script/login.js');
 var _ui = require(__dirname + '/script/ui.js');
+var _plugins = require(__dirname + '/script/plugins.js');
 const headerOptions = {
   hostname: 'localhost',
   port: 5555,
@@ -21,6 +22,7 @@ const headerOptions = {
 
 var login;
 var ui;
+var plugins;
 var userData;
 
 var authToken;
@@ -47,8 +49,10 @@ function start() {
   $('#exit-button').click(() => app.quit());
   renderer.on('log', (event, data) => console.log(data.message));
   login = _login();
+  plugins = _plugins();
   ui = _ui();
   login.init();
+  plugins.init();
 }
 
 function setSize(width, height) {
