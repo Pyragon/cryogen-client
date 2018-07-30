@@ -1,35 +1,30 @@
-const _main = require(__dirname + '/script/main.js');
 const ProgressBar = require('progressbar.js');
 var dateFormat = require('dateformat');
 
 const electron = require('electron');
 const renderer = electron.ipcRenderer;
-const _plugins = require(__dirname + '/script/plugins.js');
+const _plugins = require(__dirname + '/plugins.js');
+const _telemetry = require(__dirname + '/telemetry/telemetry.js');
 
-var ui = function() {
+var _ui = function() {
 
   var bar;
-  var main;
   var plugins;
+  var telemetry;
 
-  var user;
-
-  function registerNotifications() {
-    renderer.on('git:last-commit', (event, data) => $('#last-commit').text(data.commit));
+  function registerNotifications(user) {
+    renderer.on('log', (event, data) => console.log(data.message));
     renderer.on('client:check', (event, data) => readClientCheck(data));
     renderer.on('client:progress', (event, data) => setProgress(data.progress, true));
     renderer.on('client:set-version', (event, data) => setVersion(data));
-  }
-
-  function getUserData(callback) {
-    if (!main.getAuthToken()) {
-      callback(false);
-      return;
-    }
-    main.request({
-      path: '/users/me',
-      method: 'GET'
-    }, {}, callback);
+    if (!user) return;
+    telemetry.subscribeToEvents([{
+      name: 'private_message_received'
+    }, {
+      name: 'logged_in'
+    }, {
+      name: 'logged_out'
+    }]);
   }
 
   function setVersion(data) {
@@ -44,7 +39,6 @@ var ui = function() {
   function checkForClient() {
     renderer.send('client:check');
     setAction('Checking for client...');
-    console.log('client');
     setProgress(0.1);
   }
 
@@ -153,36 +147,42 @@ var ui = function() {
   return {
 
     start: function() {
-      var ui = this;
       loadBar();
-      registerNotifications();
-      checkForClient();
-      renderer.send('git:last-commit');
-      getUserData((response) => {
-        if (response) {
-          if (response.error) {
-            console.error(response.error);
-            return;
-          }
-          ui.user = response.account;
-        }
-        main.setTitle('Cryogen UI - Logged in as ' + (user == null ? 'Guest' : user.display_name));
-        $('#user-lett').html(user == null ? 'G' : user.display_name.charAt(0));
+      registerGithub();
+      getUserData((data) => {
+        console.log(data);
+        registerNotifications(data);
+        checkForClient();
+        setTitle('Cryogen UI - Logged in as ' + (data == null ? 'Guest' : data.display_name));
+        $('#user-lett').html(data == null ? 'G' : data.display_name.charAt(0));
         $('#client-btn').click(btnClick);
       });
     },
 
     init: function() {
-      main = _main(this);
-      main.init();
-      plugins = _plugins(main);
+      setSize(750, 450);
+      $('#main-content').html('');
+      $('#main-content').load('ui.pug', () => ui.start());
+      plugins = _plugins();
       plugins.init();
-      main.setPluginManager(plugins);
-      main.setSize(750, 450);
-      $(this.start);
+      telemetry = _telemetry();
+      telemetry.init();
+    },
+
+    destroyUI: () => {
+      //destroy persisting objects like telemetry's server.
+      telemetry.destroy();
+    },
+
+    getPlugins: () => {
+      return plugins;
+    },
+
+    getTelemetry: () => {
+      return telemetry;
     }
 
   };
 
-}();
-ui.init();
+};
+module.exports = _ui;

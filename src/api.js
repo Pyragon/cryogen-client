@@ -19,15 +19,21 @@ var _api = function(cryogen, client) {
   };
 
   var auth_token;
+  var auth_expiry;
 
   return {
 
-    setAuthToken: function(token) {
+    setAuthToken: function(token, expiry) {
       auth_token = token;
+      auth_expiry = expiry;
     },
 
     getAuthToken: () => {
       return auth_token;
+    },
+
+    getAuthExpiry: () => {
+      return auth_expiry;
     },
 
     downloadClient: function(version, clientPath) {
@@ -63,6 +69,8 @@ var _api = function(cryogen, client) {
     //Data: Query parameters to send to endpoint
     //Callback: Function gets called when request finished with either data or error
     request: function(options, data, callback) {
+      if (auth_token && auth_expiry > new Date().getTime())
+        data.token = auth_token;
       options.path = options.path + '?' + querystring.stringify(data);
       var extended = extend(headerOptions, options);
       var req = http.request(extended, (res) => {

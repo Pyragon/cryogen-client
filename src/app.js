@@ -6,6 +6,7 @@ const path = require('path');
 const setupPug = require('electron-pug');
 const windowState = require('electron-window-state');
 const _properties = require(__dirname + '/props/properties.js');
+const notifier = require('node-notifier');
 const {
   openProcessManager
 } = require('electron-process-manager');
@@ -24,9 +25,9 @@ const {
   app,
   BrowserWindow,
   Menu,
-  Tray,
   ipcMain,
-  session
+  session,
+  Notification
 } = electron;
 
 var Cryogen = (function() {
@@ -37,22 +38,23 @@ var Cryogen = (function() {
   var window;
   var tray;
   var properties;
+  var notificationManager;
 
   var config;
 
   function startElectron() {
-
     app.on('ready', () => {
+      app.setAppUserModelId('Cryogen.CryoWebClient');
       setupPug({
         pretty: true
       }, {});
+      tray.init();
       properties = _properties();
       properties.loadProperties((configD) => {
         config = configD;
       });
       // openProcessManager();
       createWindow();
-      //tray = _tray(this, Tray);
       registerNotifications();
     });
 
@@ -73,9 +75,11 @@ var Cryogen = (function() {
   }
 
   function registerNotifications() {
-
-    ipcMain.on('login:get-token', (event, data) => sendMessage('login:set-token', api.getAuthToken()));
-    ipcMain.on('login:set-token', (event, data) => api.setAuthToken(data.token));
+    ipcMain.on('login:get-token', (event, data) => sendMessage('login:set-token', {
+      token: api.getAuthToken(),
+      expiry: api.getAuthExpiry()
+    }));
+    ipcMain.on('login:set-token', (event, data) => api.setAuthToken(data.token, data.expiry));
     ipcMain.on('git:last-commit', (event, data) => github.respond('last-commit', data));
     ipcMain.on('plugins:load', (event, data) => sendMessage('plugins:load', config.modules));
     ipcMain.on('client:play', client.play);
@@ -84,7 +88,6 @@ var Cryogen = (function() {
     ipcMain.on('bar:animate', (event, data) => {
       updateProgress(data.progress, true);
     });
-
   }
 
   function createWindow() {
@@ -105,7 +108,7 @@ var Cryogen = (function() {
           thickFrame: true,
           transparent: true,
           title: 'Login to Cryogen',
-          iconUrl: 'http://cryogen.live/images/icon.png'
+          icon: __dirname + '/static/images/icon.png'
         });
       } catch (e) {
         console.log(e);
@@ -117,6 +120,7 @@ var Cryogen = (function() {
       }));
       window.on('closed', () => {
         window = null;
+        tray.destroy();
       });
       mainWindowState.manage(window);
       Menu.setApplicationMenu(null);
@@ -126,7 +130,6 @@ var Cryogen = (function() {
   }
 
   function updateProgress(progress, fromRender = false) {
-    console.log(progress);
     window.setProgressBar(progress == 1 ? 0 : progress);
     if (!fromRender)
       window.webContents.send('client:progress', {
@@ -137,14 +140,13 @@ var Cryogen = (function() {
   return {
 
     init: function() {
+      startElectron();
       github = _github(this);
       api = _api(this);
       client = _client(this);
+      tray = _tray();
       client.init();
 
-      //TODO - load configs
-
-      startElectron();
     },
 
     updateProgress: (progress) => {
@@ -161,10 +163,24 @@ var Cryogen = (function() {
       });
     },
 
+    sendNotification: (title, body, callback, silent) => {
+      var noty = new Notification({
+        title,
+        body: 'noty',
+        silent,
+        icon: 'http://cryogen.live/images/icon.png'
+      });
+      noty.show();
+    },
+
     sendMessage: (opcode, data) => sendMessage(opcode, data),
 
     getWindow: function() {
       return window;
+    },
+
+    getAPI: () => {
+      return api;
     }
 
   };

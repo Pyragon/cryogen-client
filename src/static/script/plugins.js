@@ -2,7 +2,7 @@ const electron = require('electron');
 const renderer = electron.ipcRenderer;
 const app = electron.remote.app;
 
-var _plugins = function(main) {
+var _plugins = function() {
 
   var plugins = [];
 
@@ -44,7 +44,7 @@ var _plugins = function(main) {
     var pluginPath = data.location ? data.location : app.getPath('userData') + '/plugins/' + data.name;
     var plugin;
     try {
-      plugin = require(pluginPath)(main);
+      plugin = require(pluginPath)();
     } catch (error) {
       console.log('Error loading plugin!');
       console.error(error);
@@ -53,6 +53,10 @@ var _plugins = function(main) {
     plugin.init(data.config);
     plugins[data.name] = plugin;
     var container = $(`#${positions[data.name]}`);
+    if (container.length <= 0) {
+      console.log('Error loading plugin on position ' + positions[data.name]);
+      return;
+    }
     for (var i = 0; i < plugin.getStylesheets().length; i++) {
       var p = pluginPath + '/' + plugin.getStylesheets()[i];
       var link = document.createElement('link');
@@ -73,7 +77,8 @@ var _plugins = function(main) {
     var plugin = plugins[name];
     if (!plugin) return;
     var container = $(`#${positions[name]}`);
-    container.html(plugin.getDom());
+    if (container.length > 0)
+      container.html(plugin.getDom());
   }
 
   return {

@@ -2,3 +2,5 @@
 /client/*
 .idea/
 *.iml
+/dist/
+/installer/

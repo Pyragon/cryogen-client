@@ -50,11 +50,28 @@ body {
   margin-top: 4px;
 }
 
+#reload-button {
+  background: #04B404;
+  font-size: 9pt;
+  line-height: 11px;
+  margin-left: 4px;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #0B610B;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#reload-button:hover {
+  background: #088A08;
+}
+
 #minimize-button {
   background: #ffbd4c;
   font-size: 9pt;
   line-height: 11px;
-  margin-left: 4px;
+  margin-left: 8px;
   width: 11px;
   height: 11px;
   border: 1px solid #e09e3e;

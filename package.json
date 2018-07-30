@@ -1,11 +1,15 @@
 {
-  "name": "cryogen-client",
+  "name": "CryoWebClient",
   "version": "1.0.0",
   "description": "Desktop client for Cryogen RSPS",
   "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "postinstall": "electron-builder install-app-deps",
+    "build-osx": "electron-packager ./src --electron-version 2.0.5 --app-version 1.0.0 --platform darwin --arch x64 --icon ./assets/icon.icns --out ./dist --overwrite",
+    "build-linux": "electron-packager ./src --electron-version 2.0.5 --app-version 1.0.0 --platform linux --arch x64 --icon ./assets/icon.png --out ./dist --overwrite",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -17,26 +21,33 @@
     "url": "https://github.com/Pyragon/cryogen-client/issues"
   },
   "build": {
-    "appId": "com.cryo.cryogen-client"
+    "appId": "Cryogen.CryoWebClient",
+    "mac": {
+      "category": "public.app-category.games"
+    }
   },
   "homepage": "https://github.com/Pyragon/cryogen-client#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "dateformat": "^3.0.3",
-    "electron": "^2.0.5",
     "electron-debug": "^2.0.0",
     "electron-process-manager": "^0.5.1",
     "electron-pug": "^2.0.0",
-    "electron-reload": "^1.2.5",
     "electron-titlebar": "0.0.3",
     "electron-window-state": "^4.1.1",
     "express": "^4.16.3",
+    "node-notifier": "^5.2.1",
+    "node-process-windows": "0.0.2",
     "octonode": "^0.9.2",
     "path": "^0.12.7",
     "prettysize": "^1.1.0",
     "progressbar.js": "^1.0.1",
     "request-progress": "^3.0.0",
     "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "electron": "^2.0.5",
+    "electron-packager": "^12.1.0"
   }
 }

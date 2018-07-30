@@ -2,12 +2,14 @@ html
   head
     link(rel='stylesheet', href='stylesheets/style.css')
     link(rel='stylesheet', href='script/jquery/jquery-ui.min.css')
+    link(rel='stylesheet', href='stylesheets/fa/css/all.min.css')
     script.
       if (typeof module === 'object') { window.module = module; module = undefined;}
     script(src='script/jquery/external/jquery/jquery.js')
     script(src='script/jquery/jquery-ui.min.js')
     script.
       if(window.module) module = window.module;
+    script(src='script/main.js')
   body
     div#wrapper
       div#title-bar
@@ -15,6 +17,6 @@ html
         div#title
         div.buttons
           div#minimize-button
+          div#reload-button
           div#exit-button
       div#main-content
-        include login
