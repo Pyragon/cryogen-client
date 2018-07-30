@@ -39,10 +39,10 @@ Overall:
     ✔ Create 'widget' system to display 2-3 widgets on main client page @done(2018-07-23 00:28) @project(Overall / Main-UI)
     ☐ Periodically check for updates/client existance. (Just in case)
     ☐ Right click options on button to reveal more (Reinstall, Find client path, open client path, etc)
-    Plugins System:
-      ✔ Plugins loaded from node modules installed in AppData @done(2018-07-22 06:00) @project(Overall / Main-UI / Plugins System)
-      ✔ Load plugins onto UI based on positions in config file @done(2018-07-22 06:01) @project(Overall / Main-UI / Plugins System)
-      ☐ Check what's exposed by plugin system and work on security for it
+    Widgets System:
+      ✔ Widgets loaded from node modules installed in AppData @done(2018-07-22 06:00) @project(Overall / Main-UI / Widgets System)
+      ✔ Load widgets onto UI based on positions in config file @done(2018-07-22 06:01) @project(Overall / Main-UI / Widgets System)
+      ☐ Check what's exposed by widget system and work on security for it
     Widgets:
       ✔ Latest News @done(2018-07-23 00:26) @project(Overall / Main-UI / Widgets)
       ✔ Latest Updates @done(2018-07-23 01:21) @project(Overall / Main-UI / Widgets)

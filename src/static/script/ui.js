@@ -3,13 +3,13 @@ var dateFormat = require('dateformat');
 
 const electron = require('electron');
 const renderer = electron.ipcRenderer;
-const _plugins = require(__dirname + '/plugins.js');
+const _widgets = require(__dirname + '/widgets.js');
 const _telemetry = require(__dirname + '/telemetry/telemetry.js');
 
 var _ui = function() {
 
   var bar;
-  var plugins;
+  var widgets;
   var telemetry;
 
   function registerNotifications(user) {
@@ -163,8 +163,8 @@ var _ui = function() {
       setSize(750, 450);
       $('#main-content').html('');
       $('#main-content').load('ui.pug', () => ui.start());
-      plugins = _plugins();
-      plugins.init();
+      widgets = _widgets();
+      widgets.init();
       telemetry = _telemetry();
       telemetry.init();
     },
@@ -174,8 +174,8 @@ var _ui = function() {
       telemetry.destroy();
     },
 
-    getPlugins: () => {
-      return plugins;
+    getWidgets: () => {
+      return widgets;
     },
 
     getTelemetry: () => {

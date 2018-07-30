@@ -1,6 +1,6 @@
 var defaults = {
 
-  modules: [{
+  widgets: [{
       name: 'cclient-latest-threads',
       position: 'first',
       config: []
