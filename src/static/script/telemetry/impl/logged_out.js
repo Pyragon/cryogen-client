@@ -8,6 +8,7 @@ var _logged = () => {
 
     receive: (data) => {
       sendNotification('Logged Out Event', 'You have logged out @ ' + dateFormat(new Date(), 'h:MM:ss TT'), () => {
+        if (!config.focusOnLogout) return;
         if (data && data.pid) {
           windows.getProcesses((error, processes) => {
             if (error) {

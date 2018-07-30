@@ -10,7 +10,8 @@ var defaults = {
       position: 'second',
       config: []
     }
-  ]
+  ],
+  focusOnLogout: true
 
 };
 module.exports = defaults;
