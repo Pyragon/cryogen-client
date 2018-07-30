@@ -12,16 +12,16 @@ var _login = function() {
   var password;
   var remember_check;
 
-  function keyPressed() {
+  function keyPressed(e) {
     var value = $(e.target).val();
     var id = $(e.target).attr('id');
     //13=Enter
-    if(e.which == 13) {
+    if (e.which == 13) {
       //If we're focused on username input, focus on password input
-      if(id === 'username') password.focus();
+      if (id === 'username') password.focus();
       else {
         //If both username and password have values, login. Otherwise, focus on username
-        if(value === '' || username.val() === '') username.focus();
+        if (value === '' || username.val() === '') username.focus();
         else login();
       }
     }
@@ -84,8 +84,8 @@ var _login = function() {
       $('#cont-guest').click(main.switchToMainUI);
       $('#login-button').click(login);
 
-      username.click(keyPressed);
-      password.click(keyPressed);
+      username.keydown(keyPressed);
+      password.keydown(keyPressed);
 
     },
 
