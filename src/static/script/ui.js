@@ -37,7 +37,7 @@ var _ui = function() {
     }];
     if (user) {
       items.push({
-        name: 'Account',
+        name: 'Account Settings',
         icon: 'fa fa-user-cog'
       });
       items.push({
