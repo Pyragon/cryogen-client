@@ -13,7 +13,7 @@ body {
   border: 1px solid #000;
   border-radius: 2px;
   background: #444;
-  min-width: 135px;
+  min-width: 145px;
   -webkit-box-shadow: 0 0 20px 0 #000000;
   box-shadow: 0 0 20px 0 #000000;
   -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
@@ -22,25 +22,28 @@ body {
 }
 
 .context-item {
-  height: 25px;
+  height: 30px;
   cursor: pointer;
+  font-size: 16px;
+  margin: auto;
 }
 
 .context-item:hover {
   background-color: #4f4f4f;
 }
 
-.context-item i {
-  width: 16px;
-  height: 16px;
-  margin: 4.5px 0 0 4.5px;
+.context-item i, .context-item svg {
+  min-width: 16px;
+  min-height: 16px;
+  max-width: 16px;
+  max-height: 16px;
 }
 
 .context-item span {
-  min-height: 25px;
-  max-height: 25px;
-  position: absolute;
-  left: 30px;
+  min-height: 30px;
+  max-height: 30px;
+  margin-left: 10px;
+  padding-right: 10px;
   display: inline-flex;
   align-items: center;
   color: #010101;
