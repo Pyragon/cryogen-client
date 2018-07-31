@@ -4,7 +4,39 @@ var _modals = () => {
 
   var openModal;
 
-  function viewModal(name, eventCallback, callback) {
+  var pos1 = 0,
+    pos2 = 0,
+    dragX, dragY;
+
+  function startDrag(e) {
+    dragX = e.clientX;
+    dragY = e.clientY;
+    console.log('starting drag');
+    $('#wrapper').mouseup(stopDrag);
+    $('#wrapper').mousemove(drag);
+    return false;
+  }
+
+  function drag(e) {
+    pos1 = dragX - e.clientX;
+    pos2 = dragY - e.clientY;
+    dragX = e.clientX;
+    dragY = e.clientY;
+    var elm = $('#modal');
+    var offset = elm.offset();
+    elm.css('top', (offset.top - pos2) + 'px');
+    elm.css('left', (offset.left - pos1) + 'px');
+    return false;
+  }
+
+  function stopDrag(e) {
+    var elm = $('#modal-bar');
+    $('#wrapper').off('mousemove');
+    $('#wrapper').off('mouseup');
+    return false;
+  }
+
+  function viewModal(name, title, eventCallback, callback) {
     if (openModal) {
       destroyModal(() => viewModal(eventCallback, callback));
       return;
@@ -23,6 +55,19 @@ var _modals = () => {
 
     var modalBar = $('<div></div>');
     modalBar.prop('id', 'modal-bar');
+
+    modalBar.mousedown(startDrag);
+
+    var modalTitle = $('<span></span>');
+    modalTitle.prop('id', 'modal-title');
+    if (title) modalTitle.html(title);
+
+    var exitButton = $('<div></div>');
+    exitButton.prop('id', 'modal-exit-button');
+    exitButton.click(destroyModal);
+
+    modalBar.append(modalTitle);
+    modalBar.append(exitButton);
 
     var container = $('<div></div>');
 

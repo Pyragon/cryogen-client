@@ -34,7 +34,7 @@ var _ui = function() {
       name: 'Settings',
       icon: 'fa fa-cogs',
       callback: () => {
-        console.log('test13215');
+        modals.viewModal('log_out_conf', 'Log out');
       }
     }];
     if (user) {
