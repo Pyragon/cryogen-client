@@ -46,6 +46,37 @@ body {
   color: #010101;
 }
 
+#main-content {
+  z-index: 0;
+}
+
+#blank-page {
+  width: 750px;
+  height: 450px;
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
+}
+
+#modal {
+  z-index: 2;
+  position: absolute;
+  -webkit-box-shadow: 0 0 20px 0 #000000;
+  box-shadow: 0 0 20px 0 #000000;
+  -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  border: 1px solid #000;
+  border-radius: 5px;
+  background: #333;
+}
+
+#modal-bar {
+  width: 100%;
+  background-color: #222;
+  height: 24px;
+}
+
 #wrapper {
   margin: 0px;
   background-color: #333;
