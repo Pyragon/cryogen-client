@@ -66,7 +66,7 @@ var _login = function() {
 
   return {
 
-    start: function() {
+    start: function(callback) {
       registerGithub();
 
       getCookie('login-name', (error, value) => {
@@ -81,10 +81,11 @@ var _login = function() {
 
       username.keydown(keyPressed);
       password.keydown(keyPressed);
+      if (callback) callback();
 
     },
 
-    init: function() {
+    init: function(callback) {
       setTitle('Login to Cryogen');
       setSize(300, 315);
       var login = this;
@@ -93,7 +94,7 @@ var _login = function() {
         username = $('#username');
         password = $('#password');
         remember_check = $('#remember-check');
-        login.start();
+        login.start(callback);
       });
     },
 

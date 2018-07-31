@@ -55,9 +55,44 @@ function start() {
   plugins = _plugins();
   context = _context();
   ui = _ui();
-  login.init();
   plugins.init();
   context.init();
+  modals.init();
+
+  if (!config.autoLogin)
+    login.init();
+  else {
+    var username = config.username;
+    var password = config.password;
+    if (!username || !password) {
+      startLoginWithError('Error loading username or password');
+      return;
+    }
+    request({
+      path: '/login',
+      method: 'POST'
+    }, {
+      username,
+      password,
+      revoke: true
+    }, (response) => {
+      if (response.error) {
+        if (response.error.includes('ECONNREFUSED'))
+          response.error = 'Error connecting to server.';
+        startLoginWithError(response.error);
+        return;
+      }
+      setAuthToken(response.token, response.expiry);
+      switchToMainUI();
+    });
+  }
+}
+
+function startLoginWithError(error) {
+  console.error(error);
+  login.init(() => {
+    login.setError(error);
+  });
 }
 
 function setSize(width, height) {
