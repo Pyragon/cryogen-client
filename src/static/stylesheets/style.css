@@ -7,6 +7,45 @@ body {
   overflow: hidden;
 }
 
+#context-menu {
+  position: absolute;
+  display: none;
+  border: 1px solid #000;
+  border-radius: 2px;
+  background: #444;
+  min-width: 135px;
+  -webkit-box-shadow: 0 0 20px 0 #000000;
+  box-shadow: 0 0 20px 0 #000000;
+  -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+}
+
+.context-item {
+  height: 25px;
+  cursor: pointer;
+}
+
+.context-item:hover {
+  background-color: #4f4f4f;
+}
+
+.context-item i {
+  width: 16px;
+  height: 16px;
+  margin: 4.5px 0 0 4.5px;
+}
+
+.context-item span {
+  min-height: 25px;
+  max-height: 25px;
+  position: absolute;
+  left: 30px;
+  display: inline-flex;
+  align-items: center;
+  color: #010101;
+}
+
 #wrapper {
   margin: 0px;
   background-color: #333;

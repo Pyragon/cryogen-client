@@ -2,17 +2,14 @@ html
   head
     link(rel='stylesheet', href='stylesheets/style.css')
     link(rel='stylesheet', href='script/jquery/jquery-ui.min.css')
-    link(rel='stylesheet', href='stylesheets/fa/css/all.min.css')
+    //- script(src='https://use.fontawesome.com/7734c3eeb7.js')
+    link(rel='stylesheet', href='https://use.fontawesome.com/releases/v5.2.0/css/all.css', integrity='sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ', crossorigin='anonymous')
     script.
       if (typeof module === 'object') { window.module = module; module = undefined;}
     script(src='script/jquery/external/jquery/jquery.js')
     script(src='script/jquery/jquery-ui.min.js')
     script.
       if(window.module) module = window.module;
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js')
-    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.0/jquery.contextMenu.min.css')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.0/jquery.contextMenu.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.0/jquery.ui.position.js')
     script(src='script/main.js')
   body
     div#wrapper
@@ -24,3 +21,5 @@ html
           div#reload-button
           div#exit-button
       div#main-content
+      div#context-menu
+        div#context-list

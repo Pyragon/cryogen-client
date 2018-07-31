@@ -12,6 +12,7 @@ const querystring = require('querystring');
 var _login = require(__dirname + '/script/login.js');
 var _ui = require(__dirname + '/script/ui.js');
 var _plugins = require(__dirname + '/script/plugins.js');
+var _context = require(__dirname + '/script/context-menu.js');
 const headerOptions = {
   hostname: 'localhost',
   port: 5555,
@@ -23,6 +24,7 @@ const headerOptions = {
 var login;
 var ui;
 var plugins;
+var context;
 var userData;
 
 var authToken;
@@ -51,9 +53,11 @@ function start() {
   config = remote.getGlobal('config');
   login = _login();
   plugins = _plugins();
+  context = _context();
   ui = _ui();
   login.init();
   plugins.init();
+  context.init();
 }
 
 function setSize(width, height) {
