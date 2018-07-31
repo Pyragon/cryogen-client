@@ -75,12 +75,10 @@ var _context = () => {
         menu.css('display', 'block');
         var x = e.pageX;
         var y = e.pageY;
-        console.log(x + ' ' + (x + 135));
-        console.log(y + ' ' + (y - menu.height()));
-        if (x + 135 > $('#wrapper').width()) menu.css('left', (x - 135) + 'px');
+        if (x + menu.width() > $('#wrapper').width()) menu.css('left', (x - menu.width()) + 'px');
         else menu.css('left', x + 'px');
         if (y - menu.height() < 0) menu.css('top', y + 'px');
-        else menu.css('top', y + 'px');
+        else menu.css('top', (y - menu.height()) + 'px');
         return false;
       });
 
