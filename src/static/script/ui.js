@@ -12,6 +12,8 @@ var _ui = function() {
   var widgets;
   var telemetry;
 
+  var started;
+
   function registerNotifications(user) {
     renderer.on('log', (event, data) => console.log(data.message));
     renderer.on('client:check', (event, data) => readClientCheck(data));
@@ -180,6 +182,7 @@ var _ui = function() {
       registerGithub();
       widgets = _widgets();
       widgets.init();
+      started = true;
       getUserData((data) => {
         registerNotifications(data);
         buildContextMenu(data);
@@ -209,6 +212,10 @@ var _ui = function() {
 
     getTelemetry: () => {
       return telemetry;
+    },
+
+    hasStarted: () => {
+      return started;
     }
 
   };

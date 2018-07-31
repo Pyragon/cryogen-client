@@ -13,6 +13,7 @@ var _login = require(__dirname + '/script/login.js');
 var _ui = require(__dirname + '/script/ui.js');
 var _plugins = require(__dirname + '/script/plugins.js');
 var _context = require(__dirname + '/script/context-menu.js');
+var _modals = require(__dirname + '/script/modals.js');
 const headerOptions = {
   hostname: 'localhost',
   port: 5555,
@@ -25,6 +26,7 @@ var login;
 var ui;
 var plugins;
 var context;
+var modals;
 var userData;
 
 var authToken;
@@ -54,6 +56,7 @@ function start() {
   login = _login();
   plugins = _plugins();
   context = _context();
+  modals = _modals();
   ui = _ui();
   plugins.init();
   context.init();
