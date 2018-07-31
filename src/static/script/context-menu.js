@@ -8,6 +8,13 @@ var _context = () => {
     $('#context-menu').css('display', 'none');
   }
 
+  function clicked(e) {
+    var target = $(e.target).closest('.context-item');
+    var callback = target.data('callback');
+    var clickEvent = target.data('click-event');
+    callback(clickEvent, e);
+  }
+
   return {
 
     init: () => {
@@ -51,12 +58,15 @@ var _context = () => {
           var span = $('<span></span>');
           span.html(item.name);
           if (item.icon) {
-            var icon = $('<i></i>');
-            icon.addClass(item.icon);
+            var icon = $(`<i class="${item.icon} fa-fw"></i>`);
+            icon.css('margin-left', (5 + ((20 - 16) / 2)) + 'px');
             listItem.append(icon);
           }
-          if (item.callback)
-            listItem.bind('click', item.callback);
+          if (item.callback) {
+            listItem.data('callback', item.callback);
+            listItem.data('click-event', e);
+            listItem.bind('click', clicked);
+          }
           listItem.bind('click', closeMenu);
           listItem.append(span);
 
@@ -65,12 +75,10 @@ var _context = () => {
         menu.css('display', 'block');
         var x = e.pageX;
         var y = e.pageY;
-        console.log(x + ' ' + (x + 135));
-        console.log(y + ' ' + (y - menu.height()));
-        if (x + 135 > $('#wrapper').width()) menu.css('left', (x - 135) + 'px');
+        if (x + menu.width() > $('#wrapper').width()) menu.css('left', (x - menu.width()) + 'px');
         else menu.css('left', x + 'px');
         if (y - menu.height() < 0) menu.css('top', y + 'px');
-        else menu.css('top', y + 'px');
+        else menu.css('top', (y - menu.height()) + 'px');
         return false;
       });
 
