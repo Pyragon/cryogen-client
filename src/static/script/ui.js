@@ -27,6 +27,35 @@ var _ui = function() {
     }]);
   }
 
+  function buildContextMenu(user) {
+    var items = [{
+      name: 'Settings',
+      icon: 'fa fa-cogs',
+      callback: () => {
+        console.log('test13215');
+      }
+    }];
+    if (user) {
+      items.push({
+        name: 'Account',
+        icon: 'fa fa-user-cog'
+      });
+      items.push({
+        name: 'Log Out',
+        icon: 'fa fa-user-times'
+      });
+    } else {
+      items.push({
+        name: 'Log In',
+        icon: 'fa fa-user-plus'
+      });
+    }
+    context.addMenuItems({
+      selector: '#user-area',
+      items
+    });
+  }
+
   function setVersion(data) {
     if (data.version)
       editClientVersion(data.version);
@@ -152,8 +181,8 @@ var _ui = function() {
       widgets = _widgets();
       widgets.init();
       getUserData((data) => {
-        console.log(data);
         registerNotifications(data);
+        buildContextMenu(data);
         checkForClient();
         setTitle('Cryogen UI - Logged in as ' + (data == null ? 'Guest' : data.display_name));
         $('#user-lett').html(data == null ? 'G' : data.display_name.charAt(0));
