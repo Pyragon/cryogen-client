@@ -8,6 +8,13 @@ var _context = () => {
     $('#context-menu').css('display', 'none');
   }
 
+  function clicked(e) {
+    var target = $(e.target).closest('.context-item');
+    var callback = target.data('callback');
+    var clickEvent = target.data('click-event');
+    callback(clickEvent, e);
+  }
+
   return {
 
     init: () => {
@@ -55,8 +62,11 @@ var _context = () => {
             icon.addClass(item.icon);
             listItem.append(icon);
           }
-          if (item.callback)
-            listItem.bind('click', item.callback);
+          if (item.callback) {
+            listItem.data('callback', item.callback);
+            listItem.data('click-event', e);
+            listItem.bind('click', clicked);
+          }
           listItem.bind('click', closeMenu);
           listItem.append(span);
 
