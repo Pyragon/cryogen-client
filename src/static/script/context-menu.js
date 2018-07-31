@@ -58,8 +58,8 @@ var _context = () => {
           var span = $('<span></span>');
           span.html(item.name);
           if (item.icon) {
-            var icon = $('<i></i>');
-            icon.addClass(item.icon);
+            var icon = $(`<i class="${item.icon} fa-fw"></i>`);
+            icon.css('margin-left', (5 + ((20 - 16) / 2)) + 'px');
             listItem.append(icon);
           }
           if (item.callback) {
