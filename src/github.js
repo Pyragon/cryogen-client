@@ -38,13 +38,9 @@ var _github = function(cryogen) {
           last_update = 'Error connecting to Github.';
           callback(last_update, last_hash);
         } else {
-          if (body.length > 0) {
-            last_hash = body[0].sha.substring(0, 7);
-            last_update = body[0].commit.message;
-          } else {
-            last_hash = body.sha.substring(0, 7);
-            last_update = body.commit.message;
-          }
+          var data = body.length > 0 ? body[0] : body;
+          last_hash = data.sha.substring(0, 7);
+          last_update = data.commit.message;
           callback(last_update, last_hash);
         }
       });
