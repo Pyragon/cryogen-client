@@ -4,7 +4,7 @@ var _plugins = () => {
   var intervals = [];
 
   function loadPlugins() {
-    var data = config.plugins;
+    var data = store.get('plugins');
     for (var i = 0; i < data.length; i++) {
       loadPlugin(data[i]);
     }

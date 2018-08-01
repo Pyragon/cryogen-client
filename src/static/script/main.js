@@ -8,6 +8,11 @@ const app = remote.app;
 var extend = require('util')._extend;
 const http = require('http');
 const querystring = require('querystring');
+const Store = require('electron-store');
+var defaults = require(__dirname + '/../defaults.js');
+const store = new Store({
+  defaults
+});
 
 var _login = require(__dirname + '/script/login.js');
 var _ui = require(__dirname + '/script/ui.js');
@@ -35,8 +40,6 @@ var authExpiry;
 var lastDataCheck;
 var lastHash;
 
-var config;
-
 $(document).ready(() => start());
 
 function registerGithub(callback) {
@@ -52,7 +55,6 @@ function start() {
   $('#minimize-button').click(() => remote.getCurrentWindow().minimize());
   $('#exit-button').click(() => app.quit());
   renderer.on('log', (event, data) => console.log(data.message));
-  config = remote.getGlobal('config');
   login = _login();
   plugins = _plugins();
   context = _context();
@@ -62,11 +64,11 @@ function start() {
   context.init();
   modals.init();
 
-  if (!config.autoLogin)
+  if (!store.get('autoLogin'))
     login.init();
   else {
-    var username = config.username;
-    var password = config.password;
+    var username = store.get('username');
+    var password = store.get('password');
     if (!username || !password) {
       startLoginWithError('Error loading username or password');
       return;

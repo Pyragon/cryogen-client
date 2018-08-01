@@ -12,7 +12,7 @@ var _widgets = function() {
   var intervals = [];
 
   function loadWidgets() {
-    var data = config.widgets;
+    var data = store.get('widgets');
     for (var i = 0; i < 3; i++) {
       if ([i] == null || position[data[i].position]) continue;
       var widget = data[i];

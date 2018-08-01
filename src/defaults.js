@@ -11,7 +11,9 @@ var defaults = {
       config: []
     }
   ],
-  focusOnLogout: true
-
+  plugins: [],
+  focusOnLogout: true,
+  autoLogin: false,
+  askForLogout: true
 };
 module.exports = defaults;

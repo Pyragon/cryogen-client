@@ -5,7 +5,6 @@ const url = require('url');
 const path = require('path');
 const setupPug = require('electron-pug');
 const windowState = require('electron-window-state');
-const _properties = require(__dirname + '/props/properties.js');
 const notifier = require('node-notifier');
 const {
   openProcessManager
@@ -17,6 +16,11 @@ var _api = require(__dirname + '/api.js');
 // require('electron-reload')(__dirname, {
 //   electron: require('$(__dirname)/../../node_modules/electron')
 // });
+var defaults = require(__dirname + '/defaults.js');
+const Store = require('electron-store');
+const store = new Store({
+  defaults
+});
 require('electron-debug')({
   showDevTools: true,
   enabled: true
@@ -39,8 +43,6 @@ var Cryogen = (function() {
   var properties;
   var notificationManager;
 
-  var config;
-
   function startElectron() {
     app.on('ready', () => {
       app.setAppUserModelId('Cryogen.CryoWebClient');
@@ -48,11 +50,6 @@ var Cryogen = (function() {
         pretty: true
       }, {});
       tray.init();
-      properties = _properties();
-      properties.loadProperties((configD) => {
-        config = configD;
-        global.config = config;
-      });
       // openProcessManager();
       createWindow();
       registerNotifications();
@@ -81,8 +78,8 @@ var Cryogen = (function() {
     }));
     ipcMain.on('login:set-token', (event, data) => api.setAuthToken(data.token, data.expiry));
     ipcMain.on('git:last-commit', (event, data) => github.respond('last-commit', data));
-    ipcMain.on('widgets:load', (event, data) => sendMessage('widgets:load', config.widgets));
-    ipcMain.on('plugins:load', (event, data) => sendMessage('plugins:load', config.plugins));
+    ipcMain.on('widgets:load', (event, data) => sendMessage('widgets:load', store.get('widgets')));
+    ipcMain.on('plugins:load', (event, data) => sendMessage('plugins:load', store.get('plugins')));
     ipcMain.on('client:play', client.play);
     ipcMain.on('client:update', client.update);
     ipcMain.on('client:check', client.checkForLocal);
