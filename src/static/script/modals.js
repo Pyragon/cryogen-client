@@ -1,8 +1,13 @@
 const fs = require('fs');
+const Store = require('electron-store');
+const store = new Store({
+  name: 'modal-data'
+});
 
 var _modals = () => {
 
   var openModal;
+  var modalName;
 
   var pos1 = 0,
     pos2 = 0,
@@ -11,9 +16,11 @@ var _modals = () => {
   function startDrag(e) {
     dragX = e.clientX;
     dragY = e.clientY;
-    console.log('starting drag');
-    $('#wrapper').mouseup(stopDrag);
-    $('#wrapper').mousemove(drag);
+    $(document).mouseup(stopDrag);
+    $('#blank-page').mousemove(drag);
+    $('#blank-page').mouseenter(checkDrag);
+    $('#modal').mousemove(drag);
+    $('#modal').mouseenter(checkDrag);
     return false;
   }
 
@@ -24,15 +31,27 @@ var _modals = () => {
     dragY = e.clientY;
     var elm = $('#modal');
     var offset = elm.offset();
-    elm.css('top', (offset.top - pos2) + 'px');
-    elm.css('left', (offset.left - pos1) + 'px');
+    var top = offset.top - pos2;
+    var left = offset.left - pos1;
+    if (top < 24) top = 24;
+    if (top > 450 - elm.height()) top = 450 - elm.height();
+    if (left < 0) left = 0;
+    if (left > 750 - elm.width()) left = 750 - elm.width();
+    elm.css('top', top + 'px');
+    elm.css('left', left + 'px');
     return false;
   }
 
   function stopDrag(e) {
     var elm = $('#modal-bar');
-    $('#wrapper').off('mousemove');
-    $('#wrapper').off('mouseup');
+    $('#blank-page').off('mousemove');
+    $(document).off('mouseup');
+    $('#blank-page').off('mouseenter');
+    $('#modal').off('mousemove');
+    $('#modal').off('mouseenter');
+    var position = $('#modal').position();
+    store.set(modalName + '.top', position.top);
+    store.set(modalName + '.left', position.left);
     return false;
   }
 
@@ -41,6 +60,7 @@ var _modals = () => {
       destroyModal(() => viewModal(eventCallback, callback));
       return;
     }
+    modalName = name;
     if (!ui.hasStarted()) {
       console.error('Cannot show modal before UI has been loaded.');
       return;
@@ -79,10 +99,17 @@ var _modals = () => {
       });
       $('#wrapper').append(modal);
       $('#wrapper').append($('<div id="blank-page"></div>'));
-      modal.css({
-        left: (750 - modal.width()) / 2 + 'px',
-        top: (450 - modal.height()) / 2 + 'px'
-      });
+      if (store.get(modalName)) {
+        var pos = store.get(modalName);
+        modal.css({
+          left: pos.left + 'px',
+          top: pos.top + 'px'
+        });
+      } else
+        modal.css({
+          left: (750 - modal.width()) / 2 + 'px',
+          top: (450 - modal.height()) / 2 + 'px'
+        });
     });
 
     openModal = modal;
@@ -94,6 +121,7 @@ var _modals = () => {
     $('#blank-page').remove();
     openModal.remove();
     openModal = null;
+    modalName = null;
   }
 
   return {
