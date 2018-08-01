@@ -33,9 +33,7 @@ var _ui = function() {
     var items = [{
       name: 'Settings',
       icon: 'fa fa-cogs',
-      callback: () => {
-        modals.viewModal('log_out_conf', 'Log out');
-      }
+      callback: () => modals.viewModal('preferences', 'Preferences')
     }];
     if (user) {
       items.push({
@@ -44,7 +42,12 @@ var _ui = function() {
       });
       items.push({
         name: 'Log Out',
-        icon: 'fa fa-user-times'
+        icon: 'fa fa-user-times',
+        callback: () => {
+          if (store.get('askForLogout'))
+            modals.viewModal('log_out_conf', 'Log Out');
+          else switchToLogin();
+        }
       });
     } else {
       items.push({
@@ -201,9 +204,10 @@ var _ui = function() {
       telemetry.init();
     },
 
-    destroyUI: () => {
+    destroy: () => {
       //destroy persisting objects like telemetry's server.
       telemetry.destroy();
+      context.unregisterSelector('#user-area');
     },
 
     getWidgets: () => {

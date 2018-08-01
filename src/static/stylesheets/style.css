@@ -74,6 +74,16 @@ body {
   background: #333;
 }
 
+.button {
+  border-radius: 5px;
+  border: 1px solid #000;
+  background-color: #222;
+  color: #888;
+  cursor: pointer;
+  width: 150px;
+  height: 50px;
+}
+
 #modal-bar {
   width: 100%;
   background-color: #222;
@@ -86,6 +96,7 @@ body {
   margin-left: 5px;
   display: inline-flex;
   align-items: center;
+  cursor: default;
 }
 
 #wrapper {

@@ -238,7 +238,12 @@ function getUserData(callback) {
   });
 }
 
+function switchToLogin() {
+  setAuthToken(null, 0);
+  ui.destroy();
+  login.init();
+}
+
 function switchToMainUI() {
-  console.log('Switching');
   ui.init();
 }

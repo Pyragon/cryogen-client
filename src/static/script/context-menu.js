@@ -93,6 +93,10 @@ var _context = () => {
         console.error('No items specified!');
       }
       menuItems.push(items);
+    },
+
+    unregisterSelector: (selector) => {
+      menuItems.splice(menuItems.findIndex(i => i.selector == selector), 1);
     }
 
   };
