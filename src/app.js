@@ -13,9 +13,9 @@ var _tray = require(__dirname + '/tray/tray.js');
 var _github = require(__dirname + '/github.js');
 var _client = require(__dirname + '/client.js');
 var _api = require(__dirname + '/api.js');
-// require('electron-reload')(__dirname, {
-//   electron: require('$(__dirname)/../../node_modules/electron')
-// });
+require('electron-reload')(__dirname, {
+  electron: require('$(__dirname)/../../node_modules/electron')
+});
 var defaults = require(__dirname + '/defaults.js');
 const Store = require('electron-store');
 const store = new Store({
