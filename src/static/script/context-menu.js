@@ -85,6 +85,10 @@ var _context = () => {
     },
 
     addMenuItems: (items) => {
+      if (menuItems.filter(i => i.selector === items.selector).length > 0) {
+        console.log('MenuItem selector still exists.');
+        return;
+      }
       if (!items.selector) {
         console.error('No selector specified.');
         return;
@@ -96,7 +100,7 @@ var _context = () => {
     },
 
     unregisterSelector: (selector) => {
-      menuItems.splice(menuItems.findIndex(i => i.selector == selector), 1);
+      menuItems.splice(menuItems.indexOf(i => i.selector == selector), 1);
     }
 
   };
