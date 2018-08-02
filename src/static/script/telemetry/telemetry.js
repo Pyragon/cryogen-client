@@ -30,6 +30,8 @@ var _telemetry = () => {
   }
 
   function destroyServer() {
+    var host = server.address().address;
+    var port = server.address().port;
     server.close();
     console.log(`Finished listening for events at http://${host}:${port}.`);
   }
