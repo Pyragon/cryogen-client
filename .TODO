@@ -10,7 +10,7 @@ Overall:
     ☐ Create own installer
     ☐ Ensure proper signing of installer to avoid 'Unsafe program' warning on windows
   Preferences:
-    ☐ Popup modal from right-click on user-area
+    ✔ Popup modal from right-click on user-area @done(2018-08-01 18:05) @project(Overall / Preferences)
     Impl:
       ☐ Launch on Startup
       ☐ Auto login (Insecure method that will store user/pass on computer)
@@ -22,8 +22,9 @@ Overall:
     ☐ Check for when server is back online and register events again
     ☐ Register any events that were submitted while offline
   Context Menu System:
-    ☐ Either use electron-context-menu and add ability to style or
-    ☐ Create context-menu system that can be styled, and sent params depending on what you click on
+    ✔ Either use electron-context-menu and add ability to style or @done(2018-07-31 03:29) @project(Overall / Context Menu System)
+    ✔ Create context-menu system that can be styled, and sent params depending on what you click on @done(2018-07-31 03:29) @project(Overall / Context Menu System)
+    ☐ Add ability to disable menu items (doesn't show pointer, or hover)
   Tray System:
     ✔ Sits in Tray @done(2018-07-19 13:40) @project(Overall / Tray System)
     ✔ Listen for events from Cryogen API @done(2018-07-27 00:19) @project(Overall / Tray System)
@@ -31,6 +32,7 @@ Overall:
   Login Page:
     ☐ Possibly a second 'insecure' option to just auto-login (Will save hashed pass on computer)
     ☐ Decide whether to refresh token when expired, or require login again
+    ☐ Disable login button after clicking initially to stop from loading UI twice.
     ✔ Link forgotton password button to /recover?username= webpage @done(2018-07-19 21:47) @project(Overall / Login Page)
     ✔ Remember Me button should delete previously saved username if unchecked @done(2018-07-17 22:24) @project(Before release / Auto Udpating Client / Login Page)
   Main-UI:
@@ -38,7 +40,7 @@ Overall:
     ✔ Load latest updates for server, website, and client from Cryogen API @done(2018-07-19 13:37) @project(Overall / Main-UI)
     ✔ Create 'widget' system to display 2-3 widgets on main client page @done(2018-07-23 00:28) @project(Overall / Main-UI)
     ☐ Periodically check for updates/client existance. (Just in case)
-    ☐ Right click options on button to reveal more (Reinstall, Find client path, open client path, etc)
+    ☐ Context Menu on button to reveal more (Reinstall, Find client path, open client path, etc)
     Widgets System:
       ✔ Widgets loaded from node modules installed in AppData @done(2018-07-22 06:00) @project(Overall / Main-UI / Widgets System)
       ✔ Load widgets onto UI based on positions in config file @done(2018-07-22 06:01) @project(Overall / Main-UI / Widgets System)
