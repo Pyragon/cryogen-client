@@ -30,26 +30,40 @@ var _ui = function() {
   }
 
   function buildContextMenu(user) {
-    var items = [{
+    var items = [];
+    var settings = {
       name: 'Settings',
       icon: 'fa fa-cogs',
-      callback: () => modals.viewModal('preferences', 'Preferences')
-    }];
+      callback: () => modals.viewModal({
+        name: 'preferences',
+        title: 'Client Preferences',
+        height: 300,
+        width: 250,
+        saveDragPosition: false
+      })
+    };
     if (user) {
       items.push({
         name: 'Account Settings',
         icon: 'fa fa-user-cog'
       });
+      items.push(settings);
       items.push({
         name: 'Log Out',
         icon: 'fa fa-user-times',
         callback: () => {
           if (store.get('askForLogout'))
-            modals.viewModal('log_out_conf', 'Log Out');
+            modals.viewModal({
+              name: 'log_out_conf',
+              title: 'Log Out',
+              height: 100,
+              width: 175
+            });
           else switchToLogin();
         }
       });
     } else {
+      items.push(settings);
       items.push({
         name: 'Log In',
         icon: 'fa fa-user-plus'
