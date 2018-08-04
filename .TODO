@@ -1,65 +1,78 @@
 It is recommended that you use the atom-tasks package to view TODO files.
 https://atom.io/packages/tasks
 Overall:
-  ✔ Auto-updating client created in node.js and express @done(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
-  ✘ Load JAR into node in client (hopefully, otherwise just have it run the jar) @cancelled(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
-  ✔ Create plugin system for the client that exposes an api with client data @done(2018-07-30 03:23) @project(Overall)
-  ☐ Figure out how to use HTML5 Notifications with service-worker
-  Packaging:
-    ✔ Check how directory for props.json and clientv*.jar will function when packaged @done(2018-07-22 05:59) @project(Overall / Packaging)
+    ☐ Figure out how to use HTML5 Notifications with service-worker
+Packaging:
     ☐ Create own installer
     ☐ Ensure proper signing of installer to avoid 'Unsafe program' warning on windows
-  Preferences:
-    ✔ Popup modal from right-click on user-area @done(2018-08-01 18:05) @project(Overall / Preferences)
+Preferences:
     Impl:
-      ☐ Launch on Startup
-      ☐ Auto login (Insecure method that will store user/pass on computer)
-      ☐ Location to download client (Default to /Downloads)
-      API Settings (Advanced):
-        ☐ Token expiry time
-  Telemetry Event:
+        ☐ Create forum thread explaining dangers of auto login
+    Widgets:
+        ☐ List of installed widgets
+        ☐ List can be sorted by the options (name, date added, installed, position)
+        ☐ Edit modal system to load a modal inside the preferences modal to set the widget preferences
+        ☐ Install option at the top. (Requires NPM)
+        API Settings (Advanced):
+            ☐ Token expiry time
+Telemetry Events:
     ☐ Notify on server restart that Telemetry events will soon go offline
     ☐ Check for when server is back online and register events again
     ☐ Register any events that were submitted while offline
-  Context Menu System:
-    ✔ Either use electron-context-menu and add ability to style or @done(2018-07-31 03:29) @project(Overall / Context Menu System)
-    ✔ Create context-menu system that can be styled, and sent params depending on what you click on @done(2018-07-31 03:29) @project(Overall / Context Menu System)
+Hover System:
+    ☐ Overrides javascript hover for title system
+    ☐ Assign titles to selectors
+    ☐ Waits for 3 second hover, then displays title
+Context Menu System:
     ☐ Add ability to disable menu items (doesn't show pointer, or hover)
-  Tray System:
-    ✔ Sits in Tray @done(2018-07-19 13:40) @project(Overall / Tray System)
-    ✔ Listen for events from Cryogen API @done(2018-07-27 00:19) @project(Overall / Tray System)
-    ✔ Popup Bubble for notifications @done(2018-07-27 00:20) @project(Overall / Tray System)
-  Login Page:
+Tray System:
+Login Page:
     ☐ Possibly a second 'insecure' option to just auto-login (Will save hashed pass on computer)
     ☐ Decide whether to refresh token when expired, or require login again
     ☐ Disable login button after clicking initially to stop from loading UI twice.
-    ✔ Link forgotton password button to /recover?username= webpage @done(2018-07-19 21:47) @project(Overall / Login Page)
-    ✔ Remember Me button should delete previously saved username if unchecked @done(2018-07-17 22:24) @project(Before release / Auto Udpating Client / Login Page)
-  Main-UI:
-    ✔ Load latest news threads from Cryogen API @done(2018-07-19 13:37) @project(Overall / Main-UI)
-    ✔ Load latest updates for server, website, and client from Cryogen API @done(2018-07-19 13:37) @project(Overall / Main-UI)
-    ✔ Create 'widget' system to display 2-3 widgets on main client page @done(2018-07-23 00:28) @project(Overall / Main-UI)
+Main-UI:
     ☐ Periodically check for updates/client existance. (Just in case)
     ☐ Context Menu on button to reveal more (Reinstall, Find client path, open client path, etc)
-    Widgets System:
-      ✔ Widgets loaded from node modules installed in AppData @done(2018-07-22 06:00) @project(Overall / Main-UI / Widgets System)
-      ✔ Load widgets onto UI based on positions in config file @done(2018-07-22 06:01) @project(Overall / Main-UI / Widgets System)
+Widgets System:
       ☐ Check what's exposed by widget system and work on security for it
-    Plugin System:
-      ✔ Generally the same as widgets, except they don't display anything by default @done(2018-07-30 03:23) @project(Overall / Main-UI / Plugin System)
-    Widgets:
-      ✔ Latest News @done(2018-07-23 00:26) @project(Overall / Main-UI / Widgets)
-      ✔ Latest Updates @done(2018-07-23 01:21) @project(Overall / Main-UI / Widgets)
-      ✔ Telemetry Events Example @done(2018-07-30 01:49) @project(Overall / Main-UI / Widgets)
-      ☐ Highscores
-      In-game Chat:
-        ☐ Private Messages
-        ☐ Clan Chat
-        ☐ Friends Chat
-      Forum:
-        ☐ Private Messages
-        ☐ Watch certain forum posts/categories
-  Enhancements:
+      Impl:
+        ☐ Highscores
+        In-game Chat:
+            ☐ Private Messages
+            ☐ Clan Chat
+            ☐ Friends Chat
+        Forum:
+            ☐ Private Messages
+            ☐ Watch certain forum posts/categories
+Plugin System:
+Enhancements:
     ☐ Restyle login button on login UI
     ☐ Restyle remember me button on login UI
     ☐ Add animation to minimizing/maximizing screen
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+    ✔ Auto-updating client created in node.js and express @done(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
+    ✘ Load JAR into node in client (hopefully, otherwise just have it run the jar) @cancelled(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
+    ✔ Create plugin system for the client that exposes an api with client data @done(2018-07-30 03:23) @project(Overall)
+    ✔ Check how directory for props.json and clientv*.jar will function when packaged @done(2018-07-22 05:59) @project(Overall / Packaging)
+    ✔ Popup modal from right-click on user-area @done(2018-08-01 18:05) @project(Overall / Preferences)
+    ✔ Launch on Startup @done(2018-08-02 01:54) @project(Overall / Preferences / Impl)
+    ✔ Auto login (Insecure method that will store user/pass on computer) @done(2018-08-02 02:22) @project(Overall / Preferences / Impl)
+    ✔ Location to download client (Default to /Downloads) @done(2018-08-02 03:04) @project(Overall / Preferences / Impl)
+    ✔ Either use electron-context-menu and add ability to style or @done(2018-07-31 03:29) @project(Overall / Context Menu System)
+    ✔ Create context-menu system that can be styled, and sent params depending on what you click on @done(2018-07-31 03:29) @project(Overall / Context Menu System)
+    ✔ Sits in Tray @done(2018-07-19 13:40) @project(Overall / Tray System)
+    ✔ Listen for events from Cryogen API @done(2018-07-27 00:19) @project(Overall / Tray System)
+    ✔ Popup Bubble for notifications @done(2018-07-27 00:20) @project(Overall / Tray System)
+    ✔ Link forgotton password button to /recover?username= webpage @done(2018-07-19 21:47) @project(Overall / Login Page)
+    ✔ Remember Me button should delete previously saved username if unchecked @done(2018-07-17 22:24) @project(Before release / Auto Udpating Client / Login Page)
+    ✔ Load latest news threads from Cryogen API @done(2018-07-19 13:37) @project(Overall / Main-UI)
+    ✔ Load latest updates for server, website, and client from Cryogen API @done(2018-07-19 13:37) @project(Overall / Main-UI)
+    ✔ Create 'widget' system to display 2-3 widgets on main client page @done(2018-07-23 00:28) @project(Overall / Main-UI)
+    ✔ Widgets loaded from node modules installed in AppData @done(2018-07-22 06:00) @project(Overall / Main-UI / Widgets System)
+    ✔ Load widgets onto UI based on positions in config file @done(2018-07-22 06:01) @project(Overall / Main-UI / Widgets System)
+    ✔ Latest News @done(2018-07-23 00:26) @project(Overall / Main-UI / Widgets)
+    ✔ Latest Updates @done(2018-07-23 01:21) @project(Overall / Main-UI / Widgets)
+    ✔ Telemetry Events Example @done(2018-07-30 01:49) @project(Overall / Main-UI / Widgets)
+    ✔ Generally the same as widgets, except they don't display anything by default @done(2018-07-30 03:23) @project(Overall / Main-UI / Plugin System)
