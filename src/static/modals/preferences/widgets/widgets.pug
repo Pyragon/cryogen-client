@@ -1,0 +1,24 @@
+link(rel='stylesheet', href='modals/preferences/widgets/widgets.css')
+script(src='modals/preferences/widgets/widgets.js')
+p.preferences-title Widget Settings
+div.pref-line
+    span.col-white(style='width: 130px;') Open default folder
+    button.button#open-widget-folder Open
+div.pref-line
+    span.col-white(style='width: 50px;') Install
+        span.col-white#npm-notice(style='font-size: 11px; cursor: pointer;') (Requires NPM)
+    input#widget-install-name(type='text', placeholder='Enter name')
+    button.button#install-widget-btn Install
+p.installed-title Installed Widgets 
+p#widgets-error
+div.pref-table-container#widgets-container
+    div.pref-table-header
+    div.pref-table
+        table
+            tr
+                th Name
+                th Position
+                th Active?
+                th Config
+                th Location
+                th Uninstall

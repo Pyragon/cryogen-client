@@ -1,0 +1,42 @@
+script.
+    var confirm = !{onConfirm};
+    var close = !{onClose};
+    var pos = !{disabled}
+    $(document).ready(() => {
+
+
+        $(`div[data-pos="${$(pos).prop('id')}"] input`).prop('disabled', true);
+
+        $('#pos-confirm').click(() => {
+            if(confirm) confirm();
+        });
+
+        $('#pos-cancel').click(() => {
+            if(close) close();
+        });
+
+        $('.position-container input').change((e) => {
+            var el = $(e.target);
+            var prevChecked = $('.position-container input:checked');
+            for(var i = 0; i < prevChecked.length; i++) {
+                var prev = $(prevChecked[i]);
+                if(prev.closest('div').data('pos') === el.closest('div').data('pos')) continue;
+                prev.prop('checked', false);
+            }
+        });
+
+    });
+input(type='hidden', id='pos-name', value=name)
+p.col-red#pos-error(style='display: none;')
+div.position-container
+    div(data-pos='first')
+        p First
+        input(type='radio')
+    div(data-pos='second')
+        p Second
+        input(type='radio')
+    div(data-pos='third')
+        p Third
+        input(type='radio')
+    button.button#pos-confirm(style='position: absolute; bottom: 5px; right: 10px; width: 80px; height: 25px;') Confirm
+    button.button#pos-cancel(style='position: absolute; bottom: 5px; left: 10px; width: 80px; height: 25px;') Cancel

@@ -10,12 +10,15 @@ var _github = function(cryogen) {
   var last_update_time;
   var loading;
 
+  var error;
+
   return {
 
     respond: function(key, data) {
       if (key == 'last-commit') {
-        this.getLastUpdate((commit, hash) => {
+        this.getLastUpdate((error, commit, hash) => {
           cryogen.sendMessage('git:last-commit', {
+            error,
             commit,
             hash
           });
@@ -26,22 +29,24 @@ var _github = function(cryogen) {
     getLastUpdate: function(callback) {
       var now = new Date().getTime();
       if (loading || last_update_time > now) {
-        callback(last_update, last_hash);
+        callback(error, last_update, last_hash);
         return;
       }
       loading = true;
-      repo.commits((error, body, headers) => {
+      repo.commits((err, body, headers) => {
         last_update_time = now + 10000;
         var hash = '';
-        if (error) {
-          console.log('Error getting latest commit: ' + error);
+        if (err) {
+          console.log('Error getting latest commit: ' + err);
+          error = err;
           last_update = 'Error connecting to Github.';
-          callback(last_update, last_hash);
+          callback(error, last_update, last_hash);
         } else {
+          error = null;
           var data = body.length > 0 ? body[0] : body;
           last_hash = data.sha.substring(0, 7);
           last_update = data.commit.message;
-          callback(last_update, last_hash);
+          callback(null, last_update, last_hash);
         }
       });
     }

@@ -1,0 +1,107 @@
+#widgets-container {
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
+}
+
+#packages-container {
+    width: 245px;
+}
+
+.table-header {
+    margin-left: 5px;
+    height: 18px;
+    background: #111;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.table {
+    margin-top: -19px;
+    height: 100px;
+}
+
+.table-back {
+    position: absolute;
+    background: #1b1b1b;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#install-bars {
+    margin-top: 10px;
+}
+
+.bar-log {
+    margin-top: 3px;
+    color: white;
+    font-size: 12px;
+}
+
+.barlog-container {
+    height: 45px;
+    width: calc(100%-10px);
+    margin-left: 5px;
+}
+
+#widget-install-name {
+    width: 130px;
+}
+
+#install-widget-btn {
+    clear: both;
+}
+
+.installed-title {
+    position: absolute;
+    bottom: 137px;
+}
+
+#pos-error {
+    font-size: 12px;
+    margin: 0px;
+    margin-top: 10px;
+    text-align: center;
+    height: 20px;
+}
+
+#widgets-error {
+    color: red;
+    font-size: 12px;
+    margin-top: 50px;
+    margin-left: 10px;
+}
+
+#location-input {
+    margin-left: 13.5px;
+    margin-top: 20px;
+    width: 200px;
+    height: 20px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #000;
+    background-color: #222;
+    color: #888;
+}
+
+.widget-active, .widget-position, .install-widget-table, .fa-check::before, .fa-clipboard::before {
+    cursor: pointer;
+}
+
+.position-container p {
+    color: white;
+}
+
+.position-container div:first-of-type {
+    margin-left: 25px;
+}
+
+.position-container div {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+}
+
+.position-container input {
+    margin-top: -5px;
+}

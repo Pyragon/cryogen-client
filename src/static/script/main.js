@@ -7,11 +7,13 @@ const session = remote.session;
 const app = remote.app;
 var extend = require('util')._extend;
 const http = require('http');
+const pug = require('pug');
+const fs = require('fs');
 const querystring = require('querystring');
 const Store = require('electron-store');
-var defaults = require(__dirname + '/../defaults.js');
+var defaults = require(__dirname + '/../defaults.js')(app);
 const store = new Store({
-  defaults
+    defaults
 });
 
 var _login = require(__dirname + '/script/login.js');
@@ -20,11 +22,11 @@ var _plugins = require(__dirname + '/script/plugins.js');
 var _context = require(__dirname + '/script/context-menu.js');
 var _modals = require(__dirname + '/script/modals.js');
 const headerOptions = {
-  hostname: 'localhost',
-  port: 5555,
-  headers: {
+    hostname: 'localhost',
+    port: 5555,
+    headers: {
 
-  }
+    }
 };
 
 var login;
@@ -43,207 +45,221 @@ var lastHash;
 $(document).ready(() => start());
 
 function registerGithub(callback) {
-  renderer.send('git:last-commit');
-  renderer.on('git:last-commit', (event, data) => {
-    $('#last-commit').text(`${data.hash} - ${data.commit}`);
-    lastHash = data.hash;
-  });
-  $('#last-commit').click(() => shell.openExternal('https://github.com/Pyragon/cryogen-client/commit/' + lastHash));
+    renderer.send('git:last-commit');
+    renderer.on('git:last-commit', (event, data) => {
+        if(data.error) {
+          $('#last-commit').text(data.commit);
+          lastHash = null;
+          return;
+        }
+        $('#last-commit').text(`${data.hash} - ${data.commit}`);
+        lastHash = data.hash;
+    });
+    $('#last-commit').click(() => {
+      if(!lastHash) {
+        console.log('Unable to connect to github.');
+        return;
+      }
+      shell.openExternal('https://github.com/Pyragon/cryogen-client/commit/' + lastHash)
+    });
 }
 
 function start() {
-  $('#minimize-button').click(() => remote.getCurrentWindow().minimize());
-  $('#exit-button').click(() => app.quit());
-  renderer.on('log', (event, data) => console.log(data.message));
-  login = _login();
-  plugins = _plugins();
-  context = _context();
-  modals = _modals();
-  ui = _ui();
-  plugins.init();
-  context.init();
-  modals.init();
+    $('#minimize-button').click(() => remote.getCurrentWindow().minimize());
+    $('#exit-button').click(() => app.quit());
+    renderer.on('log', (event, data) => console.log(data.message));
+    login = _login();
+    plugins = _plugins();
+    context = _context();
+    modals = _modals();
+    ui = _ui();
+    plugins.init();
+    context.init();
 
-  if (!store.get('autoLogin'))
-    login.init();
-  else {
-    var username = store.get('username');
-    var password = store.get('password');
-    if (!username || !password) {
-      startLoginWithError('Error loading username or password');
-      return;
+    if (!store.get('autoLogin'))
+        login.init();
+    else {
+        var username = store.get('username');
+        var password = store.get('password');
+        if (!username || !password) {
+            startLoginWithError('Error loading username or password');
+            return;
+        }
+        request({
+            path: '/login',
+            method: 'POST'
+        }, {
+            username,
+            password,
+            revoke: true
+        }, (response) => {
+            if (response.error) {
+                if (response.error.includes('ECONNREFUSED'))
+                    response.error = 'Error connecting to server.';
+                startLoginWithError(response.error);
+                return;
+            }
+            setAuthToken(response.token, response.expiry);
+            switchToMainUI();
+        });
     }
-    request({
-      path: '/login',
-      method: 'POST'
-    }, {
-      username,
-      password,
-      revoke: true
-    }, (response) => {
-      if (response.error) {
-        if (response.error.includes('ECONNREFUSED'))
-          response.error = 'Error connecting to server.';
-        startLoginWithError(response.error);
-        return;
-      }
-      setAuthToken(response.token, response.expiry);
-      switchToMainUI();
-    });
-  }
 }
 
 function startLoginWithError(error) {
-  console.error(error);
-  login.init(() => {
-    login.setError(error);
-  });
+    console.error(error);
+    login.init(() => {
+        login.setError(error);
+    });
 }
 
 function setSize(width, height) {
-  remote.getCurrentWindow().setSize(width, height);
-  $('#wrapper').css({
-    'height': `${height}px`,
-    'width': `${width}px`
-  });
+    remote.getCurrentWindow().setSize(width, height);
+    $('#wrapper').css({
+        'height': `${height}px`,
+        'width': `${width}px`
+    });
+    $('#main-content').css({
+        'height': `${height}px`,
+        'width': `${width}px`
+    });
 }
 
 function setTitle(title) {
-  $('#title').html(title);
-  remote.getCurrentWindow().setTitle(title);
+    $('#title').html(title);
+    remote.getCurrentWindow().setTitle(title);
 }
 
 function sendNotificationWithOptions(options, callback) {
-  var defaults = {
-    icon: 'http://cryogen.live/images/icon.png'
-  };
-  var extended = extend(defaults, options);
-  let noty = new Notification(options.title, {
-    body: options.body,
-    icon: options.icon
-  });
-  if (callback)
-    noty.onclick = callback;
+    var defaults = {
+        icon: 'http://cryogen.live/images/icon.png'
+    };
+    var extended = extend(defaults, options);
+    let noty = new Notification(options.title, {
+        body: options.body,
+        icon: options.icon
+    });
+    if (callback)
+        noty.onclick = callback;
 }
 
 function sendNotification(title, body, callback) {
-  let noty = new Notification(title, {
-    body,
-    icon: 'http://cryogen.live/images/icon.png'
-  });
-  if (callback)
-    noty.onclick = callback;
+    let noty = new Notification(title, {
+        body,
+        icon: 'http://cryogen.live/images/icon.png'
+    });
+    if (callback)
+        noty.onclick = callback;
 }
 
 function setAuthToken(token, expiry) {
-  authToken = token;
-  authExpiry = expiry;
+    authToken = token;
+    authExpiry = expiry;
 }
 
 function request(options, data, callback) {
-  if (authToken && authExpiry > new Date().getTime())
-    data.token = authToken;
-  options.path = options.path + '?' + querystring.stringify(data);
-  var extended = extend(headerOptions, options);
-  var req = http.request(extended, (res) => {
-    res.setEncoding('utf8');
-    let dataChunk = '';
-    res.on('data', (chunk) => {
-      dataChunk += chunk;
+    if (authToken && authExpiry > new Date().getTime())
+        data.token = authToken;
+    options.path = options.path + '?' + querystring.stringify(data);
+    var defCopy = JSON.parse(JSON.stringify(headerOptions));
+    var extended = extend(defCopy, options);
+    var req = http.request(extended, (res) => {
+        res.setEncoding('utf8');
+        let dataChunk = '';
+        res.on('data', (chunk) => {
+            dataChunk += chunk;
+        });
+        res.on('end', () => {
+            var data = "";
+            try {
+                data = JSON.parse(dataChunk);
+            } catch (e) {
+                console.log('Error occurred in JSON1: ' + dataChunk);
+                console.log('Path taken: ' + options.path);
+                console.log('Error: ' + e);
+                callback(e);
+                return;
+            }
+            try {
+                callback(data);
+            } catch (e) {
+                console.log('Error occurred in JSON2: ' + dataChunk);
+                console.log('Error occured in callback: ' + callback);
+                console.log('Path taken: ' + options.path);
+                console.log('Error: ' + e);
+                callback(e);
+            }
+        });
     });
-    res.on('end', () => {
-      var data = "";
-      try {
-        data = JSON.parse(dataChunk);
-      } catch (e) {
-        console.log('Error occurred in JSON1: ' + dataChunk);
-        console.log('Path taken: ' + options.path);
-        console.log('Error: ' + e);
-        callback(e);
-        return;
-      }
-      try {
-        callback(data);
-      } catch (e) {
-        console.log('Error occurred in JSON2: ' + dataChunk);
-        console.log('Error occured in callback: ' + callback);
-        console.log('Path taken: ' + options.path);
-        console.log('Error: ' + e);
-        callback(e);
-      }
+    req.on('error', (e) => {
+        callback({
+            success: true,
+            error: e.message
+        });
     });
-  });
-  req.on('error', (e) => {
-    console.log(`Error requesting: ${e.message}`);
-    callback({
-      success: true,
-      error: e.message
-    });
-  });
-  req.write(querystring.stringify(data));
-  req.end();
+    req.write(querystring.stringify(data));
+    req.end();
 }
 
 function getCookie(name, callback) {
-  session.defaultSession.cookies.get({
-    url: 'http://localhost',
-    name
-  }, (error, cookies) => {
-    if (error) {
-      callback(error);
-      return;
-    }
-    if (!cookies.length) {
-      callback("No cookie found.");
-      return;
-    }
-    var cookie = cookies[0].value;
-    callback(error, cookie);
-  });
+    session.defaultSession.cookies.get({
+        url: 'http://localhost',
+        name
+    }, (error, cookies) => {
+        if (error) {
+            callback(error);
+            return;
+        }
+        if (!cookies.length) {
+            callback("No cookie found.");
+            return;
+        }
+        var cookie = cookies[0].value;
+        callback(error, cookie);
+    });
 }
 
 function saveCookie(key, value) {
-  var date = new Date();
-  date.setHours(date.getHours() + 23);
-  session.defaultSession.cookies.set({
-    url: 'http://localhost',
-    name: key,
-    value,
-    session: true,
-    expirationDate: date.getTime()
-  }, (error) => {
-    if (error) console.error(error);
-  });
+    var date = new Date();
+    date.setHours(date.getHours() + 23);
+    session.defaultSession.cookies.set({
+        url: 'http://localhost',
+        name: key,
+        value,
+        session: true,
+        expirationDate: date.getTime()
+    }, (error) => {
+        if (error) console.error(error);
+    });
 }
 
 function getUserData(callback) {
-  if (!authToken) {
-    callback(null);
-    return;
-  }
-  var now = new Date().getTime();
-  if (userData && lastDataCheck < now) callback(userData);
-  request({
-    path: '/users/me',
-    method: 'GET'
-  }, {}, (response) => {
-    if (response.error) {
-      console.error(response.error);
-      callback(null);
-      return;
+    if (!authToken) {
+        callback(null);
+        return;
     }
-    userData = response.account;
-    lastDataCheck = now + 30000;
-    callback(userData);
-  });
+    var now = new Date().getTime();
+    if (userData && lastDataCheck < now) callback(userData);
+    request({
+        path: '/users/me',
+        method: 'GET'
+    }, {}, (response) => {
+        if (response.error) {
+            console.error(response.error);
+            callback(null);
+            return;
+        }
+        userData = response.account;
+        lastDataCheck = now + 30000;
+        callback(userData);
+    });
 }
 
 function switchToLogin() {
-  setAuthToken(null, 0);
-  ui.destroy();
-  login.init();
+    setAuthToken(null, 0);
+    ui.destroy();
+    login.init();
 }
 
 function switchToMainUI() {
-  ui.init();
+    ui.init();
 }

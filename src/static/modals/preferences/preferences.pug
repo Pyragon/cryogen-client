@@ -1,0 +1,13 @@
+link(rel='stylesheet', href='modals/preferences/preferences.css')
+script(src='modals/preferences/preferences.js')
+div#preferences
+    div#tabs
+        div.tab#general(data-url='general/general.pug')
+            div.tab-title General
+        div.tab#widgets(data-url='widgets/widgets.pug')
+            div.tab-title Widgets
+        div.tab#plugins(data-url='plugins/plugins.pug')
+            span.tab-title Plugins
+        div.tab#advanced(data-url='advanced/advanced.pug')
+            span.tab-title Advanced
+    div#preferences-content

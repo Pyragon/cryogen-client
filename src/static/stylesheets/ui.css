@@ -1,98 +1,99 @@
 @font-face {
-  font-family: 'LoraGX';
-  src: url('../fonts/LoraGX.ttf') format('truetype');
+    font-family: 'LoraGX';
+    src: url('../fonts/LoraGX.ttf') format('truetype');
 }
 
 #progress-bar {
-  margin-bottom: 10px;
-  display: block;
+    margin-bottom: 10px;
+    display: block;
 }
 
 #client-btn {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
 }
 
 #client-version {
-  position: absolute;
-  bottom: 75px;
-  right: 15px;
-  margin: 0;
-  width: 150px;
-  text-align: center;
-  color: white;
-  font-size: 12px;
+    position: absolute;
+    bottom: 75px;
+    right: 15px;
+    margin: 0;
+    width: 150px;
+    text-align: center;
+    color: white;
+    font-size: 12px;
 }
 
 #first, #second, #third {
-  float: left;
-  clear: both;
-  width: 185px;
-  height: 350px;
-  margin-top: -40px;
-  margin-left: 20px;
+    float: left;
+    clear: both;
+    width: 185px;
+    height: 350px;
+    margin-top: -40px;
+    margin-left: 20px;
 }
 
 #second {
-  clear: both;
-  position: absolute;
-  left: 225px;
-  top: 90px;
+    clear: both;
+    position: absolute;
+    left: 225px;
+    top: 90px;
 }
 
 #third {
-  clear: both;
-  position: absolute;
-  left: 440px;
-  top: 90px;
+    clear: both;
+    position: absolute;
+    left: 440px;
+    top: 90px;
 }
 
 #user-area {
-  float: right;
-  margin-right: 10px;
-  margin-top: 10px;
-  border: 1px solid #0e3851;
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  background-color: #18597f;
-  text-align: center;
-  line-height: 45px;
-  font-size: 23px;
-  cursor: pointer;
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+    border: 1px solid #0e3851;
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    background-color: #18597f;
+    text-align: center;
+    line-height: 45px;
+    font-size: 23px;
+    cursor: pointer;
 }
 
 #user-lett {
-  font-family: 'LoraGX';
-  color: #888;
+    font-family: 'LoraGX';
+    color: #888;
+    cursor: pointer;
 }
 
 #user-name-let {
-  width: 45px;
-  height: 45px;
-  margin-top: 13px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 18px;
+    width: 45px;
+    height: 45px;
+    margin-top: 13px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 18px;
 }
 
 #action {
-  height: 20px;
-  width: 500px;
-  display: block;
-  position: absolute;
-  bottom: 33px;
-  left: 10px;
-  color: white;
-  font-size: 14px;
+    height: 20px;
+    width: 500px;
+    display: block;
+    position: absolute;
+    bottom: 33px;
+    left: 10px;
+    color: white;
+    font-size: 14px;
 }
 
 #container {
-  height: 8px;
-  width: 500px;
-  display: block;
-  position: absolute;
-  bottom: 35px;
-  left: 10px;
+    height: 8px;
+    width: 500px;
+    display: block;
+    position: absolute;
+    bottom: 35px;
+    left: 10px;
 }

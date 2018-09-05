@@ -1,0 +1,93 @@
+script.
+    const ProgressBar = require('progressbar.js');
+
+    var barSize = 0;
+
+    var bars = [];
+
+    $(document).ready(() => {
+
+        $('.install-widget-table').click(function() {
+            var name = $(this).closest('tr').find('.result-name').html();
+            var barIndex = addProgressBar(name);
+            installWidget(name, barIndex);
+        });
+
+        bgTables();
+
+        $('.install-widget-table')[0].click();
+
+        function addProgressBar(name) {
+            if(bars[name]) return;
+            var container = $(`<div class='barlog-container'></div>`);
+            var bar = $(`<div class='progress-bar' id='progress-bar-${barSize++}'></div>`)
+
+            var log = $(`<p class='bar-log'></div>`);
+            log.html('Installing...');
+
+            container.append(bar);
+            container.append(log);
+
+            $('#install-bars').append(container);
+
+            bar = new ProgressBar.Line('#progress-bar-'+(barSize-1), {
+                strokeWidth: 4,
+                easing: 'easeInOut',
+                duration: 1400,
+                color: '#FFEA82',
+                trailColor: '#eee',
+                trailWidth: 1,
+                svgStyle: {
+                    width: '240px',
+                    height: '10px',
+                    'border-radius': '5px'
+                }
+            });
+            bars[name] = bar;
+            return barSize-1;
+        }
+
+        function installWidget(name, barIndex) {
+            var bar = bars[name];
+            if(!bar) return;
+            bar.animate(0.1);
+        }
+
+        function bgTables() {
+            $('.table-container').each(function(i, obj) {
+                var header = $(this).find('.table-header');
+                var back = $(this).find('.table-back');
+                var top = back.position().top + back.height();
+                back.css('top', top+'px');
+
+                var size = $(this).find('.table').height();
+                size -= $(this).find('tr').height();
+                back.css('height', size+'px');
+                back.css({
+                    'margin-top': -size+'px',
+                    'z-index': '-1',
+                    height: size+'px',
+                    width: header.width()+'px',
+                    'margin-left': '5px'
+                })
+            });
+        }
+
+    });
+p#install-npm-title Choose which package you wish to install
+div.table-container#packages-container
+    div.table-header
+    div.table
+        table
+            tr
+                th Name
+                th Version
+                th Install
+            for result in results
+                tr
+                    td.result-name= result.name[0]
+                    td= result.version[0]
+                    td.install-widget-table
+                        i.fa.fa-clipboard
+    div.table-back
+div#install-bars

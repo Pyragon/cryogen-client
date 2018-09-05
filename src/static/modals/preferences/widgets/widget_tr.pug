@@ -1,0 +1,11 @@
+tr(id=data.name, data-name=data.name)
+    td= data.name
+    td.widget-position=data.position.charAt(0).toUpperCase() + data.position.substring(1, data.position.length)
+    td.widget-active(class=`color: col-${data.active ? 'green' : 'red'}`)= data.active ? 'Yes' : 'No'
+    if module.getSettings()
+        td.config-btn View
+    else
+        td N/A
+    td.location-edit Edit
+    td.table-remove
+        i.fa.fa-times.col-red

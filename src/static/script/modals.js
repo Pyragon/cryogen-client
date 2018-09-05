@@ -1,167 +1,147 @@
-const fs = require('fs');
-const Store = require('electron-store');
-const extend = require('util')._extend;
-const store = new Store({
-  name: 'modal-data'
-});
-
 var _modals = () => {
 
-  var openModal;
-  var modalName;
+    var modals = {};
 
-  var defaults = {
-    width: 200,
-    height: 200,
-    draggable: true,
-    saveDragPosition: true
-  };
+    var defaults = {
+        width: 200,
+        height: 200,
+        draggable: true,
+        saveDragPosition: true,
+        container: 'main-content'
+    };
 
-  var pos1 = 0,
-    pos2 = 0,
-    dragX, dragY;
-
-  function startDrag(e) {
-    dragX = e.clientX;
-    dragY = e.clientY;
-    $(document).mouseup(stopDrag);
-    $('#blank-page').mousemove(drag);
-    $('#modal').mousemove(drag);
-    $('#modal').mouseenter(checkDrag);
-    return false;
-  }
-
-  function drag(e) {
-    pos1 = dragX - e.clientX;
-    pos2 = dragY - e.clientY;
-    dragX = e.clientX;
-    dragY = e.clientY;
-    var elm = $('#modal');
-    var offset = elm.offset();
-    var top = offset.top - pos2;
-    var left = offset.left - pos1;
-    if (top < 24) top = 24;
-    if (top > 450 - elm.height()) top = 450 - elm.height();
-    if (left < 0) left = 0;
-    if (left > 750 - elm.width()) left = 750 - elm.width();
-    elm.css('top', top + 'px');
-    elm.css('left', left + 'px');
-    return false;
-  }
-
-  function stopDrag(e) {
-    var elm = $('#modal-bar');
-    $('#blank-page').off('mousemove');
-    $(document).off('mouseup');
-    $('#blank-page').off('mouseenter');
-    $('#modal').off('mousemove');
-    $('#modal').off('mouseenter');
-    var options = $('#modal').data('options');
-    if (options.saveDragPosition) {
-      var position = $('#modal').position();
-      store.set(modalName + '.top', position.top);
-      store.set(modalName + '.left', position.left);
+    function destroyModal(container, callback) {
+        console.log($(`#${container} .modal`));
+        $(`#${container} .modal`).remove();
+        delete modals.container;
     }
-    return false;
-  }
 
-  function viewModal(options, eventCallback, callback) {
-    if (openModal) {
-      destroyModal(() => viewModal(options, eventCallback, callback));
-      return;
+    function drag(id, e) {
+        e = e || window.event;
+        var elem = $('#' + id);
+        var pos = elem.position();
+        var posX = e.clientX,
+            posY = e.clientY,
+            divTop = pos.top,
+            divLeft = pos.left;
+        var diffX = posX - divLeft,
+            diffY = posY - divTop;
+        document.onmousemove = (e) => {
+            e = e || window.event;
+            var posX = e.clientX,
+                posY = e.clientY,
+                aX = posX - diffX,
+                aY = posY - diffY;
+            var cont = $('#' + $('#' + id).data('options').container);
+            var pos = cont.position();
+            if (aX < 0) aX = 0;
+            if (aX + elem.width() > cont.width()) aX = cont.width() - elem.width();
+            if (aY < 24) aY = 24;
+            if (aY + elem.height() > cont.height()) aY = cont.height() - elem.height();
+            $('#' + id).css({
+                left: aX + 'px',
+                top: aY + 'px'
+            });
+        };
+        document.onmouseup = (e) => {
+            document.onmousemove = function() {};
+        };
     }
-    var extended = extend(defaults, options);
-    modalName = extended.name;
-    if (!ui.hasStarted()) {
-      console.error('Cannot show modal before UI has been loaded.');
-      return;
-    }
-    var location = path.join(__dirname, '../modals/' + extended.name + '.pug');
-    if (!fs.existsSync(location)) {
-      console.error('Unable to find modal with that name.');
-      return;
-    }
-    var modal = $('<div></div>');
-    modal.prop('id', 'modal');
-    modal.data('options', extended);
 
-    var modalBar = $('<div></div>');
-    modalBar.prop('id', 'modal-bar');
+    function viewModal(options, callback) {
+        var extended = extend(JSON.parse(JSON.stringify(defaults)), options);
+        if (modals.container) {
+            destroyModal(extended.container, () => viewModal(options, callback));
+            return;
+        }
+        if (!ui.hasStarted()) {
+            console.error('Cannot show modal before UI has been loaded.');
+            return;
+        }
+        var location;
+        if (!extended.html) {
+            location = path.join(__dirname, '../modals/' + extended.name + '.pug');
+            if (!fs.existsSync(location)) {
+                console.error('Unable to find modal with that name.');
+                return;
+            }
+        }
+        var modal = $('<div></div>');
+        modal.addClass('modal');
+        modal.data('options', extended);
 
-    if (extended.draggable) modalBar.mousedown(startDrag);
+        var id;
+        if (extended.id) id = extended.id;
+        else id = extended.name;
+        modal.prop('id', id);
 
-    var modalTitle = $('<span></span>');
-    modalTitle.prop('id', 'modal-title');
-    if (extended.title) modalTitle.html(extended.title);
+        var modalBar = $('<div></div>');
+        modalBar.addClass('modal-bar');
 
-    var exitButton = $('<div></div>');
-    exitButton.prop('id', 'modal-exit-button');
-    exitButton.click(destroyModal);
+        if (extended.draggable) modalBar.mousedown((e) => drag(id, e));
 
-    modalBar.append(modalTitle);
-    modalBar.append(exitButton);
+        var modalTitle = $('<span></span>');
+        modalTitle.addClass('modal-title');
+        if (extended.title) modalTitle.html(extended.title);
 
-    var container = $('<div></div>');
+        var exitButton = $('<div></div>');
+        exitButton.addClass('modal-exit-button');
+        exitButton.click(() => destroyModal(extended.container));
 
-    container.css({
-      height: extended.height + 'px',
-      width: extended.width + 'px'
-    });
+        modalBar.append(modalTitle);
+        modalBar.append(exitButton);
 
-    modal.append(modalBar);
-    modal.append(container);
-    container.load(location, () => {
-      $('#main-content').css({
-        opacity: 0.1
-      });
-      $('#wrapper').append(modal);
-      $('#wrapper').append($('<div id="blank-page"></div>'));
-      var left = 0;
-      var top = 0;
-      var pos = null;
-      if ((pos = store.get(modalName)) != null)
+        var container = $('<div></div>');
+
+        var h = extended.height + 'px';
+        var w = extended.width + 'px';
         modal.css({
-          left: pos.left + 'px',
-          top: pos.top + 'px'
+            "min-height": h,
+            "min-width": w,
+            "max-height": h + 24,
+            "max-width": w
         });
-      else if (extended.position)
-        modal.css({
-          left: extended.position.left + 'px',
-          top: extended.position.top + 'px'
-        });
-      else modal.css({
-        left: (750 - modal.width()) / 2 + 'px',
-        top: (450 - modal.height()) / 2 + 'px'
-      });
-    });
 
-    openModal = modal;
+        modal.append(modalBar);
+        modal.append(container);
+        var loadC = () => {
+            $('#' + extended.container).append(modal);
+            var left = 0;
+            var top = 0;
+            var pos = null;
+            var width = $('#' + extended.container).width();
+            var height = $('#' + extended.container).height();
+            if (extended.saveDragPosition && (pos = store.get(id)) != null)
+                modal.css({
+                    left: pos.left + 'px',
+                    top: pos.top + 'px'
+                });
+            else if (extended.position)
+                modal.css({
+                    left: extended.position.left + 'px',
+                    top: extended.position.top + 'px'
+                });
+            else modal.css({
+                left: (width - modal.width()) / 2 + 'px',
+                top: ((height + 24) - modal.height()) / 2 + 'px'
+            });
+            if (callback) callback();
+        };
+        var html = extended.html ? extended.html : pug.renderFile(location, extended.model);
+        container.html(html);
+        loadC();
 
-  }
-
-  function destroyModal(callback) {
-    $('#main-content').css('opacity', 1);
-    $('#blank-page').remove();
-    openModal.remove();
-    openModal = null;
-    modalName = null;
-  }
-
-  return {
-
-    viewModal: viewModal,
-    destroyModal: destroyModal,
-
-    init: () => {
-
-      $(document).on('mousedown.mod', '#blank-page', () => {
-        if (!openModal) return;
-        destroyModal();
-      });
-
+        modals[extended.container] = modal;
+        if (extended.onDestroy) modal.on('remove', extended.onDestroy);
     }
 
-  };
+    return {
+
+        viewModal: viewModal,
+        destroyModal: destroyModal,
+
+
+    };
 
 };
 module.exports = _modals;
