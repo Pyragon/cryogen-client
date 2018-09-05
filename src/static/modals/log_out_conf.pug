@@ -1,22 +1,21 @@
 script.
-  $(document).ready(() => {
-    
-    $('#cancel').click(() => modals.destroyModal());
-    
-    $('#logout').click(() => {
-      var ask = $('#ask input').prop('checked');
-      if(ask) store.set('askForLogout', false);
-      modals.destroyModal();
-      switchToLogin();
+    $(document).ready(() => {
+
+        $('#cancel').click(() => modals.destroyModal());
+
+        $('#logout').click(() => {
+            var ask = $('#ask input').prop('checked');
+            if(ask) store.set('askForLogout', false);
+            modals.destroyModal();
+            switchToLogin();
+        });
+
     });
-  
-  });
 
 div
-  p(style='text-align: center; color: white;') Are you sure?
-  div#ask(style='margin: auto; width: 150px;')
-    input(type='checkbox')
-    span(style='color: white;') Do not ask again
-  button.button#cancel(style='position: absolute; bottom: 5px; left: 10px; width: 75px; height: 25px;') Cancel
-  button.button#logout(style='position: absolute; bottom: 5px; right: 10px; width: 75px; height: 25px;') Log Out
-  
+    p(style='text-align: center; color: white;') Are you sure?
+    div#ask(style='margin: auto; width: 150px;')
+        input(type='checkbox')
+        span(style='color: white;') Do not ask again
+    button.button#logout(style='position: absolute; bottom: 5px; right: 10px; width: 75px; height: 25px;') Log Out
+    button.button#cancel(style='position: absolute; bottom: 5px; left: 10px; width: 75px; height: 25px;') Cancel

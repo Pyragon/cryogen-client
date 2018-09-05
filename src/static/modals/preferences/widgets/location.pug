@@ -1,0 +1,32 @@
+script.
+  const dialog = require('electron').remote.dialog;
+  var confirm = !{onConfirm};
+  var close = !{onClose};
+  var error = !{error};
+  $(document).ready(() => {
+
+    $('#browse-widget').click(() => {
+      var options = $('#location-container').data('options');
+      dialog.showOpenDialog(remote.getCurrentWindow(), {
+          title: 'Select location',
+          defaultPath: path.resolve(options.location),
+          properties: [
+              'openDirectory'
+          ]
+      }, (paths) => {
+          if (!paths || paths.length <= 0) return;
+          var _path = paths[0];
+          if(_path == path.resolve(options.location)) return;
+          $('#location-input').val(_path);
+      });
+    });
+    
+    $('#loc-confirm').click(() => confirm(error));
+    $('#loc-cancel').click(() => close(error));
+    
+  });
+div#location-container(data-options=options)
+  input#location-input(type='text', value=options.location)
+  button.button#browse-widget(style='position: absolute; bottom: 44.5px; width: 75px; left: 75px; height: 25px;') Browse
+  button.button#loc-confirm(style='position: absolute; bottom: 5px; left: 10px; width: 75px; height: 25px;') Confirm
+  button.button#loc-cancel(style='position: absolute; bottom: 5px; right: 10px; width: 75px; height: 25px;') Cancel

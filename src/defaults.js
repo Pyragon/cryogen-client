@@ -1,19 +1,29 @@
-var defaults = {
+module.exports = function(app) {
+    var config = {
 
-  widgets: [{
-      name: 'cclient-latest-threads',
-      position: 'first',
-      config: []
-    },
-    {
-      name: 'cclient-latest-updates',
-      position: 'second',
-      config: []
-    }
-  ],
-  plugins: [],
-  focusOnLogout: true,
-  autoLogin: false,
-  askForLogout: true
+        widgets: [{
+                name: 'cclient-latest-threads',
+                position: 'first',
+                config: {},
+                active: true,
+                location: './src/static/script/widgets/defaults/cclient-latest-threads',
+            },
+            {
+                name: 'cclient-latest-updates',
+                position: 'second',
+                config: {},
+                active: true,
+                location: './src/static/script/widgets/defaults/cclient-latest-updates'
+            }
+        ],
+        clientPath: null,
+        plugins: [],
+        focusOnLogout: true,
+        autoLogin: false,
+        savePassForAutoLogin: false,
+        askForLogout: true,
+        launchOnStart: false
+    };
+    config.clientPath = app.getPath('userData');
+    return config;
 };
-module.exports = defaults;

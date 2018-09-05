@@ -1,0 +1,17 @@
+include ../../../utils/switch
+mixin addSwitch(id)
+    +switch(id, 30, 17)
+script(src='modals/preferences/general/general.js')
+p.preferences-title General Settings
+div.pref-line
+    span.col-white Launch on Startup
+    +addSwitch('launchOnStart')
+div.pref-line
+    span.col-white Auto Login
+        br
+        p (Please read this first!)
+    +addSwitch('autoLogin')
+div.pref-line
+    span.col-white(style='width: 130px;') Client Location
+    button.button#browse-btn Browse
+    input#client-path(type='text', style='clear: both;')

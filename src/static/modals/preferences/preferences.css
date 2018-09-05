@@ -1,0 +1,212 @@
+#tabs {
+    float: left;
+    width: 100px;
+}
+
+#preferences-content {
+    width: 400px;
+    height: 350px;
+    float: right;
+}
+
+.preferences-title {
+    width: 399px;
+    text-align: center;
+    text-decoration: underline;
+    color: white;
+    font-size: 18px;
+}
+
+.installed-title {
+    width: 399px;
+    text-align: center;
+    text-decoration: underline;
+    color: white;
+    font-size: 13px;
+}
+
+.location-edit {
+    cursor: pointer;
+}
+
+#install-npm-title {
+    color: white;
+    font-size: 13px;
+    text-align: center;
+    width: 100%;
+}
+
+.withError {
+    margin-bottom: 30px;
+}
+
+.pref-line {
+    padding: 20px;
+    clear: both;
+}
+
+.pref-line span:not(.slider) {
+    float: left;
+    width: 375px;
+    clear: both;
+}
+
+.pref-line span a, .pref-line span p {
+    font-size: 12px;
+    text-decoration: none;
+    color: #0174DF;
+}
+
+.pref-line span p {
+    margin-top: 0px;
+}
+
+.pref-line label, .pref-line button, .pref-line input {
+    float: right;
+}
+
+.pref-line input {
+    float: right;
+    margin-top: 3px;
+    height: 17px;
+    border-radius: 3px;
+    padding: 2px;
+    padding-bottom: 3px;
+    background-color: #222;
+    color: #888;
+    font-size: 11px;
+    border: 1px solid #000;
+}
+
+.pref-line button {
+    width: 75px;
+    height: 25px;
+    margin-top: 3px;
+}
+
+.tab {
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    height: 100%;
+    width: 100px;
+    display: table;
+    cursor: pointer;
+}
+
+.tab:last-of-type {
+    border-bottom: none;
+}
+
+.tab:not(.active):hover {
+    background-color: #444;
+}
+
+.active {
+    border-right: none;
+    cursor: default;
+}
+
+.tab-title {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    color: white;
+}
+
+/* table */
+.pref-table-container {
+    width: 389px;
+    height: 127px;
+}
+
+.pref-table-header {
+    height: 18px;
+    background: #111;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.pref-table {
+    background: #1b1b1b;
+    height: 109px;
+    border-radius: 5px;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+
+.pref-table table th {}
+
+.pref-table table, .table table {
+    width: 100%;
+    top: -1px;
+    z-index: inherit;
+    color: #888;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-remove, .table-remove i::before, .config-btn {
+    cursor: pointer !important;
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    display: none;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 17px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}

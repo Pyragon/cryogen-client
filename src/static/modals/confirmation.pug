@@ -1,0 +1,24 @@
+script.
+    var confirm = !{onConfirm};
+    var close = !{onClose};
+    $(document).ready(() => {
+
+        $('#conf-confirm').click(() => {
+            if(confirm) confirm();
+        });
+
+        $('#conf-cancel').click(() => {
+            if(close) close();
+        });
+
+    });
+
+div
+    p(style='text-align: center; color: white;')= title != null ? title : 'Are you sure?'
+    - if(callback) console.log(callback)
+    if ask
+        div#ask(style='margin: auto; width: 150px;')
+            input(type='checkbox')
+            span(style='color: white;')= question
+    button.button#conf-confirm(style='position: absolute; bottom: 5px; left: 10px; width: 75px; height: 25px;')= confirm
+    button.button#conf-cancel(style='position: absolute; bottom: 5px; right: 10px; width: 75px; height: 25px;') Cancel
