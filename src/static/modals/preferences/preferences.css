@@ -122,6 +122,8 @@
 .pref-table-header {
     height: 18px;
     background: #111;
+    position: absolute;
+    top: 0px;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
 }

@@ -26,7 +26,7 @@ var _telemetry = () => {
         server = express.listen(5556, () => {
             var host = server.address().address;
             var port = server.address().port;
-            console.log(`Listening for events at http://${host}:${port}. You can configure these settings in your preferences.`);
+            //console.log(`Listening for events at http://${host}:${port}. You can configure these settings in your preferences.`);
         });
     }
 
@@ -34,7 +34,7 @@ var _telemetry = () => {
         var host = server.address().address;
         var port = server.address().port;
         server.close();
-        console.log(`Finished listening for events at http://${host}:${port}.`);
+        //console.log(`Finished listening for events at http://${host}:${port}.`);
     }
 
     function sendCallback(key, data) {

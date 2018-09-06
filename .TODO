@@ -13,8 +13,8 @@ Preferences:
         ☐ List can be sorted by the options (name, date added, installed, position)
         ☐ Edit modal system to load a modal inside the preferences modal to set the widget preferences
         ☐ Install option at the top. (Requires NPM)
-        API Settings (Advanced):
-            ☐ Token expiry time
+    API Settings (Advanced):
+        ☐ Token expiry time
 Telemetry Events:
     ☐ Notify on server restart that Telemetry events will soon go offline
     ☐ Check for when server is back online and register events again
@@ -34,8 +34,8 @@ Main-UI:
     ☐ Periodically check for updates/client existance. (Just in case)
     ☐ Context Menu on button to reveal more (Reinstall, Find client path, open client path, etc)
 Widgets System:
-      ☐ Check what's exposed by widget system and work on security for it
-      Impl:
+    ☐ Check what's exposed by widget system and work on security for it
+    Impl:
         ☐ Highscores
         In-game Chat:
             ☐ Private Messages

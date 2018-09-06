@@ -89,7 +89,6 @@ var _login = function() {
             username.keydown(keyPressed);
             password.keydown(keyPressed);
             if (callback) callback();
-            switchToMainUI();
         },
 
         init: function(callback) {

@@ -45,7 +45,6 @@ var _context = () => {
                 }
 
                 if (items.length == 0) {
-                    console.log('Item length 0');
                     return false;
                 }
                 var menu = $('#context-menu');
@@ -57,9 +56,17 @@ var _context = () => {
                     listItem.addClass('context-item');
                     var span = $('<span></span>');
                     span.html(item.name);
+                    span.css('cursor', 'pointer');
+                    if (item.textCSS) span.css(item.textCSS);
                     if (item.icon) {
                         var icon = $(`<i class="${item.icon} fa-fw"></i>`);
                         icon.css('margin-left', (5 + ((20 - 16) / 2)) + 'px');
+                        var style = $(`<style>
+                                        .${item.icon.replaceAll('fa ', '')}::before {
+                                            cursor: pointer;
+                                        }</style>`);
+                        $('html > head').append(style);
+                        if (item.iconCSS) icon.css(item.iconCSS);
                         listItem.append(icon);
                     }
                     if (item.callback) {
@@ -70,6 +77,7 @@ var _context = () => {
                     listItem.bind('click', closeMenu);
                     listItem.append(span);
 
+                    if (item.css) listItem.css(item.css);
                     list.append(listItem);
                 }
                 menu.css('display', 'block');
@@ -89,12 +97,12 @@ var _context = () => {
         },
 
         addMenuItems: (items) => {
-            if (menuItems.filter(i => i.selector === items.selector).length > 0) {
-                console.log('MenuItem selector still exists.');
-                return;
-            }
             if (!items.selector) {
                 console.error('No selector specified.');
+                return;
+            }
+            if (menuItems.filter(i => i.selector === items.selector).length > 0) {
+                console.log('Selector already active: ' + items.selector);
                 return;
             }
             if (!items.items || items.items.length == 0) {
@@ -104,7 +112,7 @@ var _context = () => {
         },
 
         unregisterSelector: (selector) => {
-            menuItems.splice(menuItems.indexOf(i => i.selector == selector), 1);
+            menuItems = menuItems.filter(i => i.selector != selector);
         }
 
     };

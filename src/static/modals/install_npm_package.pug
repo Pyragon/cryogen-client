@@ -1,24 +1,36 @@
 script.
     const ProgressBar = require('progressbar.js');
+    const fs = require('fs');
+    const spawn = require('child_process').spawn;
+    const {
+        app, dialog
+    } = require('electron').remote;
+    const getRepoName = require('get-repository-url');
 
     var barSize = 0;
 
     var bars = [];
+    var retry = [];
 
     $(document).ready(() => {
 
         $('.install-widget-table').click(function() {
             var name = $(this).closest('tr').find('.result-name').html();
-            var barIndex = addProgressBar(name);
-            installWidget(name, barIndex);
+            installWidget(name);
         });
 
         bgTables();
-
-        $('.install-widget-table')[0].click();
+        buildContextMenu();
 
         function addProgressBar(name) {
-            if(bars[name]) return;
+            if(bars[name] && !retry[name]) return;
+            if(retry[name]) {
+                var bar = bars[name];
+                var log = $(bar.getContainer()).closest('.barlog-container').find('.bar-log');
+                log.html('Retrying...');
+                delete retry[name];
+                return bar;
+            }
             var container = $(`<div class='barlog-container'></div>`);
             var bar = $(`<div class='progress-bar' id='progress-bar-${barSize++}'></div>`)
 
@@ -44,33 +56,152 @@ script.
                 }
             });
             bars[name] = bar;
-            return barSize-1;
+            return bar;
         }
 
-        function installWidget(name, barIndex) {
-            var bar = bars[name];
+        function installWidget(name, location=null) {
+            var bar = addProgressBar(name);
             if(!bar) return;
-            bar.animate(0.1);
+            var log = $(bar.getContainer()).closest('.barlog-container').find('.bar-log');
+            bar.animate(0.03);
+            if(!location)
+                location = app.getPath('userData')+'\\widgets\\'+name;
+            else
+                location = location+'\\'+name;
+            setMessage(log, `Checking location: `+location);
+            if(fs.existsSync(location)) {
+                rimraf(location, () => {});
+            } else
+                fs.mkdirSync(location);
+            setMessage(log, 'Installing... This may take a minute.');
+            getRepoName(name, (err, url) => {
+                if(err) {
+                    setMessage(log, 'Error installing widget. Please check your logs.');
+                    console.error(err);
+                    return;
+                }
+                var cd = spawn(`git`, [ "clone", url, location, '--progress' ]);
+                cd.stderr.on('data', (data) => {
+                    //console.error(data.toString());
+                    var result = data.toString();
+                    if(result.includes('objects')) {
+                        if(result.includes('Counting')) {
+                            result = result.substring(result.indexOf('ts:')+4);
+                            result = result.substring(0, result.indexOf(','));
+                            result = result.replace(/\s/g,'');
+                            setMessage(log, `Finished counting # of objects: ${result}`);
+                        } else if(result.includes('Compressing')) {
+                            result = result.substring(result.indexOf('ts:')+4);
+                            result = result.substring(0, result.indexOf(','));
+                            result = result.replace(/\s/g,'');
+                            //bar.animate(result/100);
+                            setMessage(log, `Compressing objects: ${result}%`);
+                        } else if(result.includes('Receiving')) {
+                            var perc = result.substring(result.indexOf('ts:')+4);
+                            perc = perc.substring(0, perc.indexOf('%'));
+                            perc = perc.replace(/\s/g,'');
+                            var speed = result.substring(result.indexOf('|')+1);
+                            if(speed.includes(',')) speed = speed.substring(0, speed.indexOf(','));
+                            bar.animate(perc/100);
+                            setMessage(log, `Receiving objects: ${perc}% ${speed}`)
+                        }
+                    } else if(result.includes('deltas')) {
+                        if(result.includes('Resolving')) {
+                            var perc = result.substring(result.indexOf('as:')+4);
+                            perc = perc.substring(0, perc.indexOf('%'));
+                            perc = perc.replace(/\s/g,'');
+                            bar.animate(perc/100);
+                            setMessage(log, `Resolving deltas: ${perc}%`)
+                        }
+                    }
+                });
+                cd.on('exit', (result) => {
+                    if(result == 128) { //directory not empty
+                        setMessage(log, 'Directory is not empty!');
+                        retry[name] = true;
+                        return;
+                    } else if(result == 0) {
+                        setMessage(log, 'Installing dependenices...');
+                        var install = spawn('npm.cmd', [ 'install' ], {
+                            cwd: location 
+                        })
+                        /* install.stdout.on('data', data => console.log(data.toString()));
+                        install.stderr.on('data', data => console.error(data.toString())); */
+                        install.on('exit', (result) => {
+                            if(result == 0) {
+                                var elem = $(`tr[data-name=${name}]`).find('.install-widget-table i');
+                                elem.removeClass('fa-clipboard');
+                                elem.addClass('fa-check col-green');
+                                elem.closest('.install-widget-table').css('cursor', 'default');
+                                var container = log.closest('.barlog-container');
+                                container.remove();
+                                var data = {
+                                    name,
+                                    position: 'first',
+                                    config: {}, //get default configValues from package.json
+                                    active: false,
+                                    location
+                                };
+                                ui.getWidgets().addWidget(data);
+                            }
+                        });
+                        return;
+                    }
+                    setMessage(log, 'Installation ended with result: '+result.toString());
+                });
+            });
         }
 
-        function bgTables() {
-            $('.table-container').each(function(i, obj) {
-                var header = $(this).find('.table-header');
-                var back = $(this).find('.table-back');
-                var top = back.position().top + back.height();
-                back.css('top', top+'px');
+        function setMessage(log, message) {
+            if(message.length >= 57) {
+                log.prop('title', message);
+                message = message.substring(0, 57);
+                message += '...';
+            } else
+                log.removeProp('title', '');
+            log.html(message);
+        }
 
-                var size = $(this).find('.table').height();
-                size -= $(this).find('tr').height();
-                back.css('height', size+'px');
-                back.css({
-                    'margin-top': -size+'px',
-                    'z-index': '-1',
-                    height: size+'px',
-                    width: header.width()+'px',
-                    'margin-left': '5px'
-                })
-            });
+        function buildContextMenu() {
+            context.addMenuItems({
+                selector: '.install-widget-table',
+                items: [
+                    {
+                        name: 'Default Folder',
+                        icon: 'fa fa-folder',
+                        callback: (event, e) => {
+                            var target = $(event.target);
+                            var name = target.closest('tr').find('.result-name').html();
+                            installWidget(name);
+                        },
+                        css: {
+                            cursor: 'pointer'
+                        }
+                    },
+                    {
+                        name: 'Custom Folder',
+                        icon: 'fa fa-folder',
+                        callback: (event, e) => {
+                            var target = $(event.target);
+                            var name = target.closest('tr').find('.result-name').html();
+                            dialog.showOpenDialog(remote.getCurrentWindow(), {
+                                title: 'Select location',
+                                defaultPath: path.resolve(app.getPath('userData')+'\\widgets'),
+                                properties: [
+                                    'openDirectory'
+                                ]
+                            }, (paths) => {
+                                if(!paths || paths.length <= 0) return;
+                                var _path = paths[0];
+                                installWidget(name, _path);
+                            })
+                        },
+                        css: {
+                            cursor: 'pointer'
+                        }
+                    }
+                ]
+            })
         }
 
     });
@@ -84,7 +215,7 @@ div.table-container#packages-container
                 th Version
                 th Install
             for result in results
-                tr
+                tr(data-name=result.name[0])
                     td.result-name= result.name[0]
                     td= result.version[0]
                     td.install-widget-table

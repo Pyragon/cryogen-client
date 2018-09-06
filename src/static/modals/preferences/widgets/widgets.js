@@ -39,6 +39,11 @@ $(document).ready(() => {
             } else elm.prop('title', 'Uh oh. You don\'t seem to have either GIT or NPM installed. (or both) Click to install.');
         });
     });
+
+    $('#preferences').on('remove', () => {
+        $(document).off('click', '.widget-active');
+        $(document).off('click', '#widgets-container .table-remove');
+        ui.getWidgets().unsubscribe('widget-pref');
     });
 
     $(document).on('click', '.widget-active', function() {
@@ -54,7 +59,6 @@ $(document).ready(() => {
         }
         var active = data.active;
         data.active = !active;
-        console.log(active);
         setActive(name, data.active);
         ui.getWidgets().saveWidgetData();
         if (active)
@@ -169,13 +173,24 @@ $(document).ready(() => {
         });
     });
 
-    $('#widgets-container .table-remove').click(() => {
+    $(document).on('click', '#widgets-container .table-remove', function() {
+        var name = $(this).closest('tr').data('name');
+        var data = ui.getWidgets().getWidgetData()[name];
+        if (!data) return false;
         var html = loader.loadFile(path.join(__dirname + '/modals/confirmation.pug'), {
+            name,
             title: null,
             confirm: 'Yes',
-            onConfirm: function() {
+            onConfirm: function(name) {
+                var data = ui.getWidgets().getWidgetData(name);
                 modals.destroyModal('preferences');
-                console.log('Uninstall');
+                if (data.active)
+                    ui.getWidgets().removeWidget(name);
+                var location = data.location;
+                var p = path.resolve(location);
+                if (!fs.existsSync(p)) return;
+                rimraf(p, () => {});
+                ui.getWidgets().deleteWidget(name);
             },
             onClose: function() {
                 modals.destroyModal('preferences');
@@ -244,43 +259,43 @@ $(document).ready(() => {
                 console.error(error);
                 return;
             }
+            var realResults = [];
             if (result.results[0].name[0].includes('cclient') && result.results[0].name[0] === name) {
                 //exact match. Install this package.
-                console.log('Exact match found');
+                realResults.push(result.results[0]);
             } else {
-                var realResults = [];
-                for (var i = 0; i < result.results.length; i++) {
-                    var r = result.results[i];
-                    if (!r.name[0].includes('cclient'))
-                        break;
-                    realResults.push(r);
-                    console.log(r);
-                }
-                modals.viewModal({
-                    name: 'install_npm_package',
-                    title: 'Package to Install',
-                    width: 250,
-                    container: 'preferences',
-                    saveDragPosition: false,
-                    model: {
-                        results: realResults
-                    }
-                });
-                $('#preferences').on('remove', () => modals.destroyModal());
+                realResults = result.results
+                    .filter(r => r.name[0].includes('cclient-widget'))
+                    .filter(r => !ui.getWidgets().getWidgetData(r.name[0]));
             }
+            modals.viewModal({
+                name: 'install_npm_package',
+                title: 'Package to Install',
+                width: 250,
+                container: 'preferences',
+                saveDragPosition: false,
+                model: {
+                    results: realResults
+                },
+                onDestroy: () => {
+                    context.unregisterSelector('.install-widget-table');
+                }
+            });
+            $('#preferences').on('remove', () => modals.destroyModal());
         });
     });
 
     function loadWidget(error, result, data) {
-        var module = result;
         var html = pug.renderFile(path.join(__dirname + '/modals/preferences/widgets/widget_tr.pug'), {
             data,
             module: result
         });
-        $('#widgets-container table').append($(html));
+        $('#widgets-container tbody').append($(html));
+        setTimeout(() => bgTables(), 100);
     }
 
     function loadWidgets() {
+        $('#widgets-container tbody').empty();
         var widgets = ui.getWidgets().getWidgetData();
         for (var _widget in widgets) {
             var widget = widgets[_widget];
@@ -288,9 +303,11 @@ $(document).ready(() => {
         }
     }
 
-    $('#npm-notice').click(() => shell.openExternal('https://nodejs.org/en/'));
+    ui.getWidgets().subscribe('widget-pref', () => loadWidgets());
 
-    $('#widget-install-name').val('cclient-widget');
-    $('#install-widget-btn').click();
+    $('#npm-notice').click(() => {
+        if (!npmResult) shell.openExternal('https://nodejs.org/en/');
+        if (!gitResult) shell.openExternal('https://git-scm.com/');
+    });
 
 });

@@ -1,10 +1,11 @@
 script.
     var confirm = !{onConfirm};
     var close = !{onClose};
+    var name = "!{name}";
     $(document).ready(() => {
 
         $('#conf-confirm').click(() => {
-            if(confirm) confirm();
+            if(confirm) confirm(name);
         });
 
         $('#conf-cancel').click(() => {

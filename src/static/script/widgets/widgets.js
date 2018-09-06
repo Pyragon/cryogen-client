@@ -12,6 +12,10 @@ var _widgets = function() {
 
     var intervals = [];
 
+    var subscriptions = {};
+
+    var toSave = false;
+
     function loadWidgets() {
         var data = store.get('widgets');
         for (var i = 0; i < data.length; i++) {
@@ -20,12 +24,18 @@ var _widgets = function() {
             widgetData[widget.name] = data[i];
             loadWidget(widget.name);
         }
+        if (toSave) {
+            toSave = false;
+            saveWidgetData();
+        }
     }
 
     function reloadWidgets() {
         if (widgets) {
-            for (var widget in widgets) {
-                var name = widget.name;
+            for (var _widget in widgets) {
+                var widget = widgets[_widget];
+                var data = widgetData[_widget];
+                if (data.active) widget.destroy();
                 if (intervals[name])
                     clearInterval(intervals[name]);
             }
@@ -37,11 +47,48 @@ var _widgets = function() {
         loadWidgets();
     }
 
+    function subscribe(name, callback) {
+        subscriptions.name = callback;
+    }
+
+    function unsubscribe(name) {
+        delete subscriptions[name];
+    }
+
+    function addWidget(data) {
+        widgetData[data.name] = data;
+        reloadWidgets();
+        for (var key in subscriptions) {
+            if (subscriptions.hasOwnProperty(key)) {
+                var cb = subscriptions[key];
+                cb();
+            }
+        }
+        saveWidgetData();
+    }
+
+    function deleteWidget(name) {
+        var data = widgetData[name];
+        if (!data) return;
+        console.log('removing: ' + name);
+        if (data.active) removeWidget(name);
+        delete widgetData[name];
+        saveWidgetData();
+        reloadWidgets();
+        for (var key in subscriptions) {
+            if (subscriptions.hasOwnProperty(key)) {
+                var cb = subscriptions[key];
+                cb();
+            }
+        }
+    }
+
     function removeWidget(name) {
         var data = widgetData[name];
         clearInterval(intervals[name]);
         delete intervals[name];
         var widget = widgets[name];
+        if (widget.destroy) widget.destroy();
         var widgetPath = data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + name;
         for (var i = 0; i < widget.getStylesheets().length; i++) {
             var p = `${widgetPath}/${widget.getStylesheets()[i]}`;
@@ -86,9 +133,16 @@ var _widgets = function() {
             }
             try {
                 var widget = result;
+                var widgetPath = data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + data.name;
+                var pkg = require(widgetPath + '/package.json');
+                var config = data.config;
+                if (pkg.defaultConfig) {
+                    config = extend(pkg.defaultConfig, config);
+                    data.config = config;
+                    toSave = true;
+                }
                 widget.init(data.config);
                 widgets[data.name] = widget;
-                console.log(widgets);
                 widgetData[data.name].active = true;
                 var container = $(`#${positions[data.name]}`);
                 if (container.length <= 0) {
@@ -97,7 +151,6 @@ var _widgets = function() {
                     if (callback) callback(error);
                     return;
                 }
-                var widgetPath = data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + data.name;
                 for (var i = 0; i < widget.getStylesheets().length; i++) {
                     var p = `${widgetPath}/${widget.getStylesheets()[i]}`;
                     var link = document.createElement('link');
@@ -157,17 +210,18 @@ var _widgets = function() {
             return widgets;
         },
 
-        getWidgetData: function() {
-            return widgetData;
+        getWidgetData: function(name) {
+            return name ? widgetData[name] : widgetData;
         },
 
-        saveWidgetData: saveWidgetData,
-
-        loadWidget: loadWidget,
-
-        removeWidget: removeWidget,
-
-        loadModule: loadModule,
+        addWidget,
+        deleteWidget,
+        subscribe,
+        unsubscribe,
+        saveWidgetData,
+        loadWidget,
+        removeWidget,
+        loadModule,
 
         positionTaken: function(pos) {
             return position[pos];

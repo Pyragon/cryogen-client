@@ -6,19 +6,21 @@ div.pref-line
     button.button#open-widget-folder Open
 div.pref-line
     span.col-white(style='width: 50px;') Install
-        span.col-white#npm-notice(style='font-size: 11px; cursor: pointer;') (Requires NPM)
+        span.col-white#npm-notice(style='font-size: 11px; cursor: pointer;') (Requires NPM and Git)
     input#widget-install-name(type='text', placeholder='Enter name')
     button.button#install-widget-btn Install
 p.installed-title Installed Widgets 
-p#widgets-error
-div.pref-table-container#widgets-container
-    div.pref-table-header
-    div.pref-table
+div.table-container#widgets-container
+    div.table-header
+    div.table
         table
-            tr
-                th Name
-                th Position
-                th Active?
-                th Config
-                th Location
-                th Uninstall
+            thead
+                tr
+                    th Name
+                    th Position
+                    th Active?
+                    th Config
+                    th Location
+                    th Uninstall
+            tbody
+    div.table-back

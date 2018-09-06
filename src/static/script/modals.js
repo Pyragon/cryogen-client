@@ -11,7 +11,6 @@ var _modals = () => {
     };
 
     function destroyModal(container, callback) {
-        console.log($(`#${container} .modal`));
         $(`#${container} .modal`).remove();
         delete modals.container;
     }
@@ -86,7 +85,10 @@ var _modals = () => {
 
         var exitButton = $('<div></div>');
         exitButton.addClass('modal-exit-button');
-        exitButton.click(() => destroyModal(extended.container));
+        exitButton.click(() => {
+            if (extended.onClose) extended.onClose();
+            else destroyModal(extended.container);
+        });
 
         modalBar.append(modalTitle);
         modalBar.append(exitButton);

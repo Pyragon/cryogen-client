@@ -11,6 +11,7 @@ const pug = require('pug');
 const fs = require('fs');
 const querystring = require('querystring');
 const Store = require('electron-store');
+const rimraf = require('rimraf');
 var defaults = require(__dirname + '/../defaults.js')(app);
 require(__dirname + '/utils/utils.js');
 const store = new Store({
@@ -48,20 +49,20 @@ $(document).ready(() => start());
 function registerGithub(callback) {
     renderer.send('git:last-commit');
     renderer.on('git:last-commit', (event, data) => {
-        if(data.error) {
-          $('#last-commit').text(data.commit);
-          lastHash = null;
-          return;
+        if (data.error) {
+            $('#last-commit').text(data.commit);
+            lastHash = null;
+            return;
         }
         $('#last-commit').text(`${data.hash} - ${data.commit}`);
         lastHash = data.hash;
     });
     $('#last-commit').click(() => {
-      if(!lastHash) {
-        console.log('Unable to connect to github.');
-        return;
-      }
-      shell.openExternal('https://github.com/Pyragon/cryogen-client/commit/' + lastHash)
+        if (!lastHash) {
+            console.log('Unable to connect to github.');
+            return;
+        }
+        shell.openExternal('https://github.com/Pyragon/cryogen-client/commit/' + lastHash);
     });
 }
 
@@ -77,8 +78,7 @@ function start() {
     plugins.init();
     context.init();
 
-    if (!store.get('autoLogin'))
-        login.init();
+    if (!store.get('autoLogin')) login.init();
     else {
         var username = store.get('username');
         var password = store.get('password');
@@ -263,4 +263,21 @@ function switchToLogin() {
 
 function switchToMainUI() {
     ui.init();
+}
+
+function bgTables() {
+    $('.table-container').each(function(i, obj) {
+        var header = $(this).find('.table-header');
+        var back = $(this).find('.table-back');
+
+        var size = $(this).find('.table').height();
+        size -= 18;
+        back.css({
+            'margin-top': -size + 'px',
+            'z-index': '-1',
+            height: size + 'px',
+            width: header.width() + 'px',
+            'margin-left': '5px'
+        });
+    });
 }

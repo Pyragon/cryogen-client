@@ -1,7 +1,6 @@
 #widgets-container {
-    position: absolute;
-    bottom: 10px;
-    right: 5px;
+    width: 395px;
+    clear: both;
 }
 
 #packages-container {
@@ -53,8 +52,7 @@
 }
 
 .installed-title {
-    position: absolute;
-    bottom: 137px;
+    clear: both;
 }
 
 #pos-error {
@@ -84,7 +82,7 @@
     color: #888;
 }
 
-.widget-active, .widget-position, .install-widget-table, .fa-check::before, .fa-clipboard::before {
+.widget-active, .widget-position, .install-widget-table, .fa-clipboard::before {
     cursor: pointer;
 }
 

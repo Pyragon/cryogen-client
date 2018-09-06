@@ -40,7 +40,7 @@ var _ui = function() {
                 name: 'preferences/preferences',
                 title: 'Client Preferences',
                 height: 350,
-                width: 450,
+                width: 500,
                 saveDragPosition: false,
                 id: 'preferences'
             })
@@ -69,7 +69,10 @@ var _ui = function() {
             items.push(settings);
             items.push({
                 name: 'Log In',
-                icon: 'fa fa-user-plus'
+                icon: 'fa fa-user-plus',
+                callback: () => {
+                    switchToLogin();
+                }
             });
         }
         context.addMenuItems({
@@ -231,7 +234,7 @@ var _ui = function() {
                         width: 500,
                         saveDragPosition: false,
                         id: 'preferences'
-                    })
+                    });
                 }
             });
         },

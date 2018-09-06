@@ -33,6 +33,7 @@ const Store = require('electron-store');
 const store = new Store({
     defaults
 });
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 var Cryogen = (function() {
 

@@ -27,6 +27,7 @@ $(document).ready(() => {
     }
 
     function loadTab() {
+        modals.destroyModal('preferences');
         store.set('preferences.activeTab', active);
         $('#preferences-content').load(__dirname + '/modals/preferences/' + getActiveElement().data('url'));
         getActiveElement().toggleClass('active');
