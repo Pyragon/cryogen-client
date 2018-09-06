@@ -12,13 +12,24 @@ module.exports = {
             path: '/query',
             method: 'POST'
         }, {
-            q: pack
+            q: pack,
+            fields: 'name,version,author'
         }, (response) => {
             if (response.error) {
                 callback(response.error);
                 return;
             }
             callback(null, response);
+        });
+    },
+
+    checkGIT: function(callback) {
+        exec('git --version', (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            callback(!stdout.includes('recognized'));
         });
     },
 

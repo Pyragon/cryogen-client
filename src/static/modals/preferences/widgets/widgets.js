@@ -18,19 +18,27 @@ $(document).ready(() => {
 
     var widg = this;
 
+    var npmResult;
+    var gitResult;
+
     loadWidgets();
     $('.location-edit').click();
     //Attempt to check if NPM is installed. Provide link if not
     npm.checkNPM((result) => {
-        var elm = $('#npm-notice');
-        elm.css({
-            color: result ? 'green' : 'red',
-            cursor: result ? 'default' : 'pointer'
+        npmResult = result;
+        npm.checkGIT((result) => {
+            gitResult = result;
+            var elm = $('#npm-notice');
+            elm.css({
+                color: npmResult && gitResult ? 'green' : 'red',
+                cursor: npmResult && gitResult ? 'default' : 'pointer'
+            });
+            if (npmResult && gitResult) {
+                elm.off('click');
+                elm.prop('title', 'It seems you have NPM and GIT installed. You\'re all set.');
+            } else elm.prop('title', 'Uh oh. You don\'t seem to have either GIT or NPM installed. (or both) Click to install.');
         });
-        if (result) {
-            elm.off('click');
-            elm.prop('title', 'It seems you have NPM installed. You\'re all set.');
-        } else elm.prop('title', 'Uh oh. You don\'t seem to have NPM installed. Click to install.');
+    });
     });
 
     $(document).on('click', '.widget-active', function() {
