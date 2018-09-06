@@ -12,6 +12,7 @@ const fs = require('fs');
 const querystring = require('querystring');
 const Store = require('electron-store');
 var defaults = require(__dirname + '/../defaults.js')(app);
+require(__dirname + '/utils/utils.js');
 const store = new Store({
     defaults
 });
