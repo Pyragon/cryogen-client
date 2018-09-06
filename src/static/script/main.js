@@ -249,7 +249,7 @@ function getUserData(callback) {
             callback(null);
             return;
         }
-        userData = response.account;
+        userData = response;
         lastDataCheck = now + 30000;
         callback(userData);
     });
