@@ -22,7 +22,8 @@ module.exports = function(app) {
         autoLogin: false,
         savePassForAutoLogin: false,
         askForLogout: true,
-        launchOnStart: false
+        launchOnStart: false,
+        tokenExpiry: 10800000
     };
     config.clientPath = app.getPath('userData');
     return config;

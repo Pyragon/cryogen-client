@@ -20,12 +20,10 @@ const store = new Store({
 
 var _login = require(__dirname + '/script/login.js');
 var _ui = require(__dirname + '/script/ui.js');
-var _plugins = require(__dirname + '/script/plugins.js');
 var _context = require(__dirname + '/script/context-menu.js');
 var _modals = require(__dirname + '/script/modals.js');
 const headerOptions = {
-    hostname: 'localhost',
-    port: 5555,
+    hostname: 'api.cryogen.live',
     headers: {
 
     }
@@ -33,7 +31,6 @@ const headerOptions = {
 
 var login;
 var ui;
-var plugins;
 var context;
 var modals;
 var userData;
@@ -56,6 +53,7 @@ function registerGithub(callback) {
         }
         $('#last-commit').text(`${data.hash} - ${data.commit}`);
         lastHash = data.hash;
+        if (callback) callback();
     });
     $('#last-commit').click(() => {
         if (!lastHash) {
@@ -66,44 +64,57 @@ function registerGithub(callback) {
     });
 }
 
+function calculateWidth(text) {
+    return (text.length * 14) + (text.length * 2);
+}
+
 function start() {
     $('#minimize-button').click(() => remote.getCurrentWindow().minimize());
     $('#exit-button').click(() => app.quit());
     renderer.on('log', (event, data) => console.log(data.message));
     login = _login();
-    plugins = _plugins();
     context = _context();
     modals = _modals();
     ui = _ui();
-    plugins.init();
     context.init();
 
     if (!store.get('autoLogin')) login.init();
     else {
-        var username = store.get('username');
-        var password = store.get('password');
-        if (!username || !password) {
-            startLoginWithError('Error loading username or password');
-            return;
-        }
-        request({
-            path: '/login',
-            method: 'POST'
-        }, {
-            username,
-            password,
-            revoke: true
-        }, (response) => {
-            if (response.error) {
-                if (response.error.includes('ECONNREFUSED'))
-                    response.error = 'Error connecting to server.';
-                startLoginWithError(response.error);
+        requestAuthToken((error, token) => {
+            if (error) {
+                startLoginWithError(error);
                 return;
             }
-            setAuthToken(response.token, response.expiry);
             switchToMainUI();
         });
     }
+}
+
+function requestAuthToken(callback) {
+    var username = store.get('username');
+    var password = store.get('password');
+    if (!username || !password) {
+        if (callback) callback('Error loading username or password');
+        return;
+    }
+    request({
+        path: '/login',
+        method: 'POST'
+    }, {
+        username,
+        password,
+        expiry: store.get('tokenExpiry'),
+        revoke: true
+    }, (response) => {
+        if (response.error) {
+            if (response.error.includes('ECONNREFUSED'))
+                response.error = 'Error connecting to server.';
+            if (callback) callback(response.error);
+            return;
+        }
+        setAuthToken(response.token, response.expiry);
+        if (callback) callback(null, response.token);
+    });
 }
 
 function startLoginWithError(error) {
@@ -157,10 +168,9 @@ function setAuthToken(token, expiry) {
     authExpiry = expiry;
 }
 
-function request(options, data, callback) {
-    if (authToken && authExpiry > new Date().getTime())
-        data.token = authToken;
-    options.path = options.path + '?' + querystring.stringify(data);
+function request(options, data, callback, tokenRefresh = false) {
+    if (data && authToken) data.token = authToken;
+    if (data) options.path = options.path + '?' + querystring.stringify(data);
     var defCopy = JSON.parse(JSON.stringify(headerOptions));
     var extended = extend(defCopy, options);
     var req = http.request(extended, (res) => {
@@ -177,27 +187,36 @@ function request(options, data, callback) {
                 console.log('Error occurred in JSON1: ' + dataChunk);
                 console.log('Path taken: ' + options.path);
                 console.log('Error: ' + e);
-                callback(e);
+                if (callback) callback(e);
                 return;
             }
             try {
-                callback(data);
+                if (data.error && data.error.includes('expired') && config.get('autoLogin') && !tokenRefresh) {
+                    requestAuthToken((error, token) => {
+                        if (error) {
+                            if (callback) callback(data);
+                            return;
+                        }
+                        request(options, data, callback, true);
+                    });
+                }
+                if (callback) callback(data);
             } catch (e) {
                 console.log('Error occurred in JSON2: ' + dataChunk);
                 console.log('Error occured in callback: ' + callback);
                 console.log('Path taken: ' + options.path);
                 console.log('Error: ' + e);
-                callback(e);
+                if (callback) callback(e);
             }
         });
     });
     req.on('error', (e) => {
-        callback({
+        if (callback) callback({
             success: true,
             error: e.message
         });
     });
-    req.write(querystring.stringify(data));
+    req.write(querystring.stringify(data ? data : {}));
     req.end();
 }
 
@@ -269,7 +288,6 @@ function bgTables() {
     $('.table-container').each(function(i, obj) {
         var header = $(this).find('.table-header');
         var back = $(this).find('.table-back');
-
         var size = $(this).find('.table').height();
         size -= 18;
         back.css({

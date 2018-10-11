@@ -35,9 +35,7 @@ var _widgets = function() {
             for (var _widget in widgets) {
                 var widget = widgets[_widget];
                 var data = widgetData[_widget];
-                if (data.active) widget.destroy();
-                if (intervals[name])
-                    clearInterval(intervals[name]);
+                if (data.active) removeWidget(_widget);
             }
         }
         widgets = [];
@@ -45,6 +43,15 @@ var _widgets = function() {
         positions = [];
         intervals = [];
         loadWidgets();
+    }
+
+    function setValue(widgetName, configName, value) {
+        console.log(widgetName + ' ' + configName);
+        var data = widgetData[widgetName];
+        if (!data) return;
+        if (data.config[configName])
+            data.config[configName].value = value;
+        saveWidgetData();
     }
 
     function subscribe(name, callback) {
@@ -69,8 +76,11 @@ var _widgets = function() {
 
     function deleteWidget(name) {
         var data = widgetData[name];
+        try {
+            var pPath = require.resolve(data.location);
+            delete require.cache[pPath];
+        } catch (err) {}
         if (!data) return;
-        console.log('removing: ' + name);
         if (data.active) removeWidget(name);
         delete widgetData[name];
         saveWidgetData();
@@ -88,6 +98,7 @@ var _widgets = function() {
         clearInterval(intervals[name]);
         delete intervals[name];
         var widget = widgets[name];
+        if (!widget) return;
         if (widget.destroy) widget.destroy();
         var widgetPath = data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + name;
         for (var i = 0; i < widget.getStylesheets().length; i++) {
@@ -98,8 +109,6 @@ var _widgets = function() {
         delete positions[name];
         delete position[data.position];
         delete widgets[name];
-        widgetData[name].active = false;
-        saveWidgetData();
     }
 
     function saveWidgetData() {
@@ -114,7 +123,7 @@ var _widgets = function() {
         var data = widgetData[name];
         if (!data) {
             for (var n in widgetData) console.log(n);
-            callback('Unable to find widget: ' + name);
+            if (callback) callback('Unable to find widget: ' + name);
             return;
         }
         if (!data.active && !setActive) return;
@@ -216,12 +225,14 @@ var _widgets = function() {
 
         addWidget,
         deleteWidget,
+        reloadWidgets,
         subscribe,
         unsubscribe,
         saveWidgetData,
         loadWidget,
         removeWidget,
         loadModule,
+        setValue,
 
         positionTaken: function(pos) {
             return position[pos];

@@ -10,23 +10,54 @@
 }
 
 .preferences-title {
-    width: 399px;
     text-align: center;
     text-decoration: underline;
     color: white;
     font-size: 18px;
 }
 
-.installed-title {
-    width: 399px;
+#location-input {
+    margin-left: 13.5px;
+    margin-top: 20px;
+    width: 200px;
+    height: 20px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #000;
+    background-color: #222;
+    color: #888;
+}
+
+.btn-container {
+    margin-bottom: 5px;
+    display: inline-block;
+    padding: 10px;
+    width: 100%;
+}
+
+.btn-container button {
+    width: 75px;
+    height: 25px;
+}
+
+.btn-container>button:nth-of-type(2) {
+    float: right;
+    margin: 10px;
+}
+
+.installed-title, .config-title {
     text-align: center;
     text-decoration: underline;
     color: white;
     font-size: 13px;
 }
 
-.location-edit {
+.location-edit, .fa-clipboard::before, .install-table {
     cursor: pointer;
+}
+
+.result-name {
+    padding-left: 5px;
 }
 
 #install-npm-title {
@@ -40,6 +71,11 @@
     margin-bottom: 30px;
 }
 
+.conf-container {
+    max-height: 260px;
+    overflow-y: auto;
+}
+
 .pref-line {
     padding: 20px;
     clear: both;
@@ -47,14 +83,23 @@
 
 .pref-line span:not(.slider) {
     float: left;
-    width: 375px;
+    width: 300px;
+}
+
+.pref-line span {
     clear: both;
 }
 
-.pref-line span a, .pref-line span p {
+.pref-line span a, .pref-line span .pref-link {
     font-size: 12px;
     text-decoration: none;
     color: #0174DF;
+}
+
+.pref-line span p {
+    font-size: 12px;
+    text-decoration: none;
+    color: #888;
 }
 
 .pref-line span p {
@@ -66,7 +111,6 @@
 }
 
 .pref-line input {
-    float: right;
     margin-top: 3px;
     height: 17px;
     border-radius: 3px;
@@ -76,6 +120,7 @@
     color: #888;
     font-size: 11px;
     border: 1px solid #000;
+    text-align: right;
 }
 
 .pref-line button {
@@ -114,6 +159,42 @@
 }
 
 /* table */
+.table-header {
+    margin-left: 5px;
+    height: 18px;
+    background: #111;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.table {
+    margin-top: -19px;
+    height: 100px;
+}
+
+.table-back {
+    position: absolute;
+    background: #1b1b1b;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#install-bars {
+    margin-top: 10px;
+}
+
+.bar-log {
+    margin-top: 3px;
+    color: white;
+    font-size: 12px;
+}
+
+.barlog-container {
+    height: 45px;
+    width: calc(100%-10px);
+    margin-left: 5px;
+}
+
 .pref-table-container {
     width: 389px;
     height: 127px;
@@ -148,7 +229,7 @@
     vertical-align: middle;
 }
 
-.table-remove, .table-remove i::before, .config-btn {
+.table-remove, .table-remove i::before, .config-btn, .pref-link {
     cursor: pointer !important;
 }
 

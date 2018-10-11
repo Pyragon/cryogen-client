@@ -1,0 +1,49 @@
+include ../../utils/switch
+mixin addSwitch(id)
+    +switch(id, 30, 17)
+script.
+    var confirm = !{onConfirm};
+    var name = "!{pluginName}";
+    $(document).ready(() => {
+
+        $('.pref-line-input').each(function(i, obj) {
+            var width = $(this).closest('.pref-line').find('.pref-line-description').height()/2;
+            $(this).css('margin-top', width+'px');
+        });
+
+        $('.pref-line .switch input').each(function(i, obj) {
+            var name = $(this).closest('.pref-line').data('key');
+            var config = $(this).closest('.pref-line').data('conf');
+            if(config.value === true)
+                $(this).prop('checked', true);
+        });
+
+        $('#cancel-config-btn').click(function() {
+            var exit = $(this).closest('.modal').find('.modal-exit-button');
+            exit.click();
+        });
+
+        $('#save-config-btn').click(() => {
+            if(confirm) confirm(name);
+        });
+
+    });
+p.config-title(style='font-size: 14px;')= name
+div.mar-left-10.conf-container(style='padding-bottom: 10px;')
+    for key in Object.keys(config)
+        -var conf = config[key]
+        div.pref-line(data-conf=conf, data-key=key, style='padding: 10px;')
+            div.pref-line-description
+                span.col-white(style='width: 180px; font-size: 12px;')= key+' - '+conf.type
+                    span.col-white(style='font-size: 11px; margin-left: 5px; width: 150px;')= conf.description
+            if conf.type == 'String' || conf.type == 'Integer' || conf.type == 'String Array'
+                -var width = conf.type.includes('String') ? '90px' : '25px';
+                -var value = conf.value;
+                if conf.type == 'String Array'
+                    -value = value.join();
+                input.pref-line-input(value=value, style='width: '+width+';')
+            else if conf.type == 'Boolean'
+                +addSwitch('')
+div(style='margin-top: 10px;')
+    button.button#save-config-btn(style='float: left; margin-left: 25px; margin-bottom: 10px; width: 75px; height: 25px;') Save
+    button.button#cancel-config-btn(style='float: right; margin-right: 25px; margin-bottom: 10px; width: 75px; height: 25px;') Cancel

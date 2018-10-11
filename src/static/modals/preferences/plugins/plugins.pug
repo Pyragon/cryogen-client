@@ -1,1 +1,26 @@
+link(rel='stylesheet', href='modals/preferences/plugins/plugins.css')
+script(src='modals/preferences/plugins/plugins.js')
 p.preferences-title Plugin Settings
+div.pref-line
+    span.col-white(style='width: 130px;') Open default folder
+    button.button#open-plugin-folder Open
+div.pref-line
+    span.col-white(style='width: 50px;') Install
+        span.col-white#npm-notice(style='font-size: 11px; cursor: pointer;') (Requires NPM and Git)
+    input#plugin-install-name(type='text', placeholder='Enter name')
+    button.button#install-plugin-btn Install
+p.installed-title Installed Plugins 
+p#plugins-error
+div.table-container#plugins-container
+    div.table-header(style='width: 385px;')
+    div.table
+        table
+            thead
+                tr
+                    th Name
+                    th Active?
+                    th Config
+                    th Location
+                    th Uninstall
+            tbody
+    div.table-back

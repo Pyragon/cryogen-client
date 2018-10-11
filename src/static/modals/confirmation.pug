@@ -1,6 +1,5 @@
 script.
     var confirm = !{onConfirm};
-    var close = !{onClose};
     var name = "!{name}";
     $(document).ready(() => {
 
@@ -8,18 +7,18 @@ script.
             if(confirm) confirm(name);
         });
 
-        $('#conf-cancel').click(() => {
-            if(close) close();
+        $('#conf-cancel').click(function() {
+            var exit = $(this).closest('.modal').find('.modal-exit-button');
+            exit.click();
         });
 
     });
 
 div
     p(style='text-align: center; color: white;')= title != null ? title : 'Are you sure?'
-    - if(callback) console.log(callback)
     if ask
         div#ask(style='margin: auto; width: 150px;')
             input(type='checkbox')
             span(style='color: white;')= question
-    button.button#conf-confirm(style='position: absolute; bottom: 5px; left: 10px; width: 75px; height: 25px;')= confirm
-    button.button#conf-cancel(style='position: absolute; bottom: 5px; right: 10px; width: 75px; height: 25px;') Cancel
+    button.button#conf-confirm(style='position: absolute; bottom: 5px; left: 10px; width: 75px; height: 25px;')= confirmText ? confirmText : 'Confirm'
+    button.button#conf-cancel(style='position: absolute; bottom: 5px; right: 10px; width: 75px; height: 25px;')= cancelText ? cancelText : 'Cancel'

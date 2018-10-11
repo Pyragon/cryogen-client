@@ -62,6 +62,7 @@ var _login = function() {
         }, {
             username: username.val(),
             password: password.val(),
+            expiry: store.get('tokenExpiry'),
             revoke: true
         }, (response) => {
             if (response.error) {

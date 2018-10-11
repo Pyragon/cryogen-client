@@ -7,42 +7,6 @@
     width: 245px;
 }
 
-.table-header {
-    margin-left: 5px;
-    height: 18px;
-    background: #111;
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-}
-
-.table {
-    margin-top: -19px;
-    height: 100px;
-}
-
-.table-back {
-    position: absolute;
-    background: #1b1b1b;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-#install-bars {
-    margin-top: 10px;
-}
-
-.bar-log {
-    margin-top: 3px;
-    color: white;
-    font-size: 12px;
-}
-
-.barlog-container {
-    height: 45px;
-    width: calc(100%-10px);
-    margin-left: 5px;
-}
-
 #widget-install-name {
     width: 130px;
 }
@@ -66,23 +30,11 @@
 #widgets-error {
     color: red;
     font-size: 12px;
-    margin-top: 50px;
     margin-left: 10px;
+    display: none;
 }
 
-#location-input {
-    margin-left: 13.5px;
-    margin-top: 20px;
-    width: 200px;
-    height: 20px;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #000;
-    background-color: #222;
-    color: #888;
-}
-
-.widget-active, .widget-position, .install-widget-table, .fa-clipboard::before {
+.widget-active, .widget-position {
     cursor: pointer;
 }
 

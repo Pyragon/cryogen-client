@@ -223,9 +223,17 @@ input, button, textarea, :focus {
     cursor: pointer;
 }
 
+.mar-left-10 {
+    margin-left: 10px;
+}
+
 /* font options */
 .col-white {
     color: white;
+}
+
+.col-grey {
+    color: #000;
 }
 
 .col-red {

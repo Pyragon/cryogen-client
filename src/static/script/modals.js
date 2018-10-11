@@ -13,6 +13,7 @@ var _modals = () => {
     function destroyModal(container, callback) {
         $(`#${container} .modal`).remove();
         delete modals.container;
+        if (callback) callback();
     }
 
     function drag(id, e) {
@@ -49,7 +50,8 @@ var _modals = () => {
 
     function viewModal(options, callback) {
         var extended = extend(JSON.parse(JSON.stringify(defaults)), options);
-        if (modals.container) {
+        if (modals[extended.container]) {
+            delete modals[extended.container];
             destroyModal(extended.container, () => viewModal(options, callback));
             return;
         }
@@ -59,7 +61,7 @@ var _modals = () => {
         }
         var location;
         if (!extended.html) {
-            location = path.join(__dirname, '../modals/' + extended.name + '.pug');
+            location = path.join(__dirname, '../modals/' + (extended.location ? extended.location : extended.name) + '.pug');
             if (!fs.existsSync(location)) {
                 console.error('Unable to find modal with that name.');
                 return;
@@ -108,8 +110,6 @@ var _modals = () => {
         modal.append(container);
         var loadC = () => {
             $('#' + extended.container).append(modal);
-            var left = 0;
-            var top = 0;
             var pos = null;
             var width = $('#' + extended.container).width();
             var height = $('#' + extended.container).height();
@@ -118,22 +118,29 @@ var _modals = () => {
                     left: pos.left + 'px',
                     top: pos.top + 'px'
                 });
-            else if (extended.position)
+            else if (extended.position) {
+                var left = extended.position.left ? extended.position.left + 'px' : (width - modal.width()) / 2 + 'px';
+                var top = extended.position.top ? extended.position.top + 'px' : ((height + 24) - modal.height()) / 2 + 'px';
                 modal.css({
-                    left: extended.position.left + 'px',
-                    top: extended.position.top + 'px'
+                    left,
+                    top
                 });
-            else modal.css({
-                left: (width - modal.width()) / 2 + 'px',
-                top: ((height + 24) - modal.height()) / 2 + 'px'
-            });
+            } else {
+                modal.css({
+                    left: (width - modal.width()) / 2 + 'px',
+                    top: ((height + 24) - modal.height()) / 2 + 'px'
+                });
+            }
             if (callback) callback();
         };
+        if (extended.onClose) extended.model.onClose = extended.onClose;
         var html = extended.html ? extended.html : pug.renderFile(location, extended.model);
         container.html(html);
         loadC();
 
         modals[extended.container] = modal;
+        if (extended.onDestroy) $(`#${extended.container}`).on('remove', extended.onDestroy);
+        else $(`#${extended.container}`).on('remove', () => destroyModal(extended.container));
         if (extended.onDestroy) modal.on('remove', extended.onDestroy);
     }
 

@@ -2,6 +2,18 @@ const exec = require('child_process').exec;
 
 module.exports = {
     checkPackage: function(pack, callback) {
+        // var result = {
+        //     results: [{
+        //         name: [
+        //             "cclient-plugin-telemetry-events"
+        //         ],
+        //         version: [
+        //             "1.0.0"
+        //         ]
+        //     }]
+        // };
+        // callback(null, result);
+        // return;
         if (!pack) {
             callback('No package specified.');
             return;

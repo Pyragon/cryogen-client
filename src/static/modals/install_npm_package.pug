@@ -6,7 +6,7 @@ script.
         app, dialog
     } = require('electron').remote;
     const getRepoName = require('get-repository-url');
-
+    const type = "!{type}"
     var barSize = 0;
 
     var bars = [];
@@ -14,9 +14,9 @@ script.
 
     $(document).ready(() => {
 
-        $('.install-widget-table').click(function() {
+        $('.install-table').click(function() {
             var name = $(this).closest('tr').find('.result-name').html();
-            installWidget(name);
+            install(name);
         });
 
         bgTables();
@@ -59,13 +59,16 @@ script.
             return bar;
         }
 
-        function installWidget(name, location=null) {
+        function install(name, location=null) {
             var bar = addProgressBar(name);
             if(!bar) return;
             var log = $(bar.getContainer()).closest('.barlog-container').find('.bar-log');
             bar.animate(0.03);
+            var parentLocation = app.getPath('userData')+'/'+type+'s';
+            if(!fs.existsSync(parentLocation))
+                fs.mkdirSync(parentLocation);
             if(!location)
-                location = app.getPath('userData')+'\\widgets\\'+name;
+                location = `${app.getPath('userData')}/${type}s/${name}`;
             else
                 location = location+'\\'+name;
             setMessage(log, `Checking location: `+location);
@@ -82,7 +85,6 @@ script.
                 }
                 var cd = spawn(`git`, [ "clone", url, location, '--progress' ]);
                 cd.stderr.on('data', (data) => {
-                    //console.error(data.toString());
                     var result = data.toString();
                     if(result.includes('objects')) {
                         if(result.includes('Counting')) {
@@ -94,7 +96,6 @@ script.
                             result = result.substring(result.indexOf('ts:')+4);
                             result = result.substring(0, result.indexOf(','));
                             result = result.replace(/\s/g,'');
-                            //bar.animate(result/100);
                             setMessage(log, `Compressing objects: ${result}%`);
                         } else if(result.includes('Receiving')) {
                             var perc = result.substring(result.indexOf('ts:')+4);
@@ -125,24 +126,26 @@ script.
                         var install = spawn('npm.cmd', [ 'install' ], {
                             cwd: location 
                         })
-                        /* install.stdout.on('data', data => console.log(data.toString()));
-                        install.stderr.on('data', data => console.error(data.toString())); */
                         install.on('exit', (result) => {
                             if(result == 0) {
-                                var elem = $(`tr[data-name=${name}]`).find('.install-widget-table i');
+                                var elem = $(`tr[data-name=${name}]`).find('.install-table i');
                                 elem.removeClass('fa-clipboard');
                                 elem.addClass('fa-check col-green');
-                                elem.closest('.install-widget-table').css('cursor', 'default');
+                                elem.closest('.install-table').css('cursor', 'default');
                                 var container = log.closest('.barlog-container');
                                 container.remove();
+                                var pkg = require(location+'/package.json');
+                                var config = pkg.defaultConfig || {};
                                 var data = {
                                     name,
-                                    position: 'first',
-                                    config: {}, //get default configValues from package.json
+                                    config,
                                     active: false,
                                     location
                                 };
-                                ui.getWidgets().addWidget(data);
+                                if(type == 'widget') {
+                                    data.position = 'first';
+                                    ui.getWidgets().addWidget(data);
+                                } else ui.getPlugins().addPlugin(data);
                             }
                         });
                         return;
@@ -218,7 +221,7 @@ div.table-container#packages-container
                 tr(data-name=result.name[0])
                     td.result-name= result.name[0]
                     td= result.version[0]
-                    td.install-widget-table
+                    td.install-table
                         i.fa.fa-clipboard
     div.table-back
 div#install-bars

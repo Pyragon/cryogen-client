@@ -9,9 +9,14 @@ div.pref-line
 div.pref-line
     span.col-white Auto Login
         br
-        p (Please read this first!)
+        p.pref-link (Please read this first!)
     +addSwitch('autoLogin')
 div.pref-line
     span.col-white(style='width: 130px;') Client Location
     button.button#browse-btn Browse
     input#client-path(type='text', style='clear: both;')
+div.pref-line
+    span.col-white(style='width: 130px;') Token Expiry
+        br
+        p API token expiry time in milliseconds
+    input#token-expiry(type='text')

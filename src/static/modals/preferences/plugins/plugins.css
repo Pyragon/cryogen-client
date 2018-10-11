@@ -1,0 +1,31 @@
+#plugins-container {
+    width: 385px;
+    clear: both;
+}
+
+#packages-container {
+    width: 245px;
+}
+
+#plugin-install-name {
+    width: 130px;
+}
+
+#install-plugin-btn {
+    clear: both;
+}
+
+.installed-title {
+    clear: both;
+}
+
+.plugin-active {
+    cursor: pointer;
+}
+
+#plugins-error {
+    color: red;
+    font-size: 12px;
+    margin-left: 10px;
+    display: none;
+}

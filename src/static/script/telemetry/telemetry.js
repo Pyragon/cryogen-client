@@ -15,7 +15,6 @@ var _telemetry = () => {
         express.post('/:key', (req, res) => {
             var key = req.params.key;
             var value = null;
-            console.log(key + ' ' + JSON.stringify(req.query));
             if (req.query.value)
                 value = JSON.parse(req.query.value);
             if (key)
@@ -38,9 +37,14 @@ var _telemetry = () => {
     }
 
     function sendCallback(key, data) {
-        console.log(key);
         if (!subscriptions[key]) {
-            console.log('no subscription found.');
+            var mod = require(`${__dirname}/impl/${key}.js`)();
+            if (!mod) {
+                console.log('Unable to find a callback method for this event.');
+                return;
+            }
+            if (mod.receive)
+                mod.receive(data);
             return;
         }
         for (var i = 0; i < subscriptions[key].callbacks.length; i++) {
@@ -57,7 +61,22 @@ var _telemetry = () => {
 
         destroy: () => destroyServer(),
 
-        subscribeToEvents: (events) => {
+        unsubscribeFromEvents: (_events) => {
+            var events = !Array.isArray(_events) ? _events.split(',') : _events;
+            for (var i = 0; i < events.length; i++) {
+                var event = events[i];
+                delete subscriptions[event];
+                delete replaced[event];
+            }
+            events = events.filter(e => e != 'logged_in');
+            if (events.join() != '')
+                request({
+                    path: '/telemetry/unsubscribe/' + events.join(),
+                    method: 'POST'
+                }, {}, function(ret) {});
+        },
+
+        subscribeToEvents: (events, callback) => {
             var accepted = [];
             for (var i = 0; i < events.length; i++) {
                 var event = events[i];
@@ -71,6 +90,24 @@ var _telemetry = () => {
                 method: 'POST'
             }, {}, (response) => {
                 if (response.error) {
+                    if (response.error.includes('expired')) {
+                        console.log('Token has expired');
+                        if (!store.get('autoLogin')) {
+                            sendNotification('Your token has expired and autologin is not enabled. Please logout and relogin to be able to use Telemetry events.');
+                            return;
+                        }
+                        console.log('Requesting auth token');
+                        requestAuthToken((error, token) => {
+                            if (error) {
+                                sendNotification('Error rerequesting authentication token.');
+                                console.error(error);
+                                return;
+                            }
+                            console.log('Received Token: ' + token);
+                            this.subscribeToEvents(events);
+                        });
+                        return;
+                    }
                     console.log(response.error);
                     return;
                 }
@@ -83,27 +120,18 @@ var _telemetry = () => {
                     var event = events[i];
                     if (!eAccepted.includes(event.name)) continue;
                     var cb = null;
-                    if (event.callback)
-                        cb = event.callback;
-                    else {
-                        var mod = require(`${__dirname}/impl/${event.name}.js`)();
-                        if (!mod) {
-                            console.log('Unable to find a callback method for this event.');
-                            continue;
-                        }
-                        cb = mod.receive;
-                    }
+                    if (event.callback) cb = event.callback;
                     var sub;
                     if (subscriptions[event.name]) {
                         sub = subscriptions[event.name];
                         if (event.replace && !replaced[event.name]) {
                             sub.callbacks = [];
-                            sub.callbacks.push(cb);
+                            if (cb) sub.callbacks.push(cb);
                             replaced[event.name] = true;
-                        } else
+                        } else if (cb)
                             sub.callbacks.push(cb);
                         subscriptions[event.name] = sub;
-                    } else if (!replaced[event.name]) {
+                    } else if (!replaced[event.name] && cb) {
                         sub = {
                             callbacks: []
                         };
@@ -111,6 +139,7 @@ var _telemetry = () => {
                         subscriptions[event.name] = sub;
                     }
                 }
+                if (callback) callback(response.accepted);
             });
         },
 

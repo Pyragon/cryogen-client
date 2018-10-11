@@ -34,6 +34,7 @@ var _client = function(app) {
                     return;
                 }
                 latestVersion = response.version;
+                console.log(localVersion + ' ' + latestVersion);
                 if (localVersion != latestVersion) {
                     app.updateClient('OOD', false, 'Update', false, 'Client is no longer up to date. Please update and try again.');
                     return;
@@ -68,9 +69,9 @@ var _client = function(app) {
                     app.updateClient('Error getting latest', false, 'Retry', false, 'Error getting latest version from API. Please try again.');
                     return;
                 }
-                latestVersion = response.version;
+                localVersion = response.version;
                 var version = response.version;
-                var path = response.path;
+                var path = '/live/download/' + version;
                 app.updateClient(null, true, 'Downloading...', false, `Starting download for v${version} from ${path}`);
                 api.downloadClient(version, path);
             });

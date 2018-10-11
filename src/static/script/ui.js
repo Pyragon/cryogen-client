@@ -4,12 +4,14 @@ var dateFormat = require('dateformat');
 const electron = require('electron');
 const renderer = electron.ipcRenderer;
 const _widgets = require(__dirname + '/widgets/widgets.js');
+const _plugins = require(__dirname + '/plugins.js');
 const _telemetry = require(__dirname + '/telemetry/telemetry.js');
 
 var _ui = function() {
 
     var bar;
     var widgets;
+    var plugins;
     var telemetry;
 
     var started;
@@ -46,10 +48,6 @@ var _ui = function() {
             })
         };
         if (user) {
-            items.push({
-                name: 'Account Settings',
-                icon: 'fa fa-user-cog'
-            });
             items.push(settings);
             items.push({
                 name: 'Log Out',
@@ -204,7 +202,9 @@ var _ui = function() {
             loadBar();
             registerGithub();
             widgets = _widgets();
+            plugins = _plugins();
             widgets.init();
+            plugins.init();
             started = true;
             getUserData((data) => {
                 registerNotifications(data);
@@ -217,14 +217,15 @@ var _ui = function() {
                     click = switchToLogin;
                 else {
                     click = () => modals.viewModal({
-                        name: 'account-settings/account-settings',
-                        title: 'Account Settings',
-                        height: 300,
-                        width: 300,
-                        id: 'account-settings'
+                        name: 'preferences/preferences',
+                        title: 'Client Preferences',
+                        height: 350,
+                        width: 500,
+                        saveDragPosition: false,
+                        id: 'preferences'
                     });
                 }
-                $('#user-lett').click(click);
+                $('#user-area').click(click);
                 $('#client-btn').click(btnClick);
                 if (debug) {
                     modals.viewModal({
@@ -255,6 +256,10 @@ var _ui = function() {
 
         getWidgets: () => {
             return widgets;
+        },
+
+        getPlugins: () => {
+            return plugins;
         },
 
         getTelemetry: () => {

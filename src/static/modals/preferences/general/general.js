@@ -6,6 +6,7 @@ const {
     app,
     dialog
 } = remote;
+const fs = require('fs');
 $(document).ready(() => {
 
     var delays = [];
@@ -23,6 +24,7 @@ $(document).ready(() => {
     $('#autoLogin').find('input').prop('checked', store.get('autoLogin') || store.get('savePassForAutoLogin'));
 
     $('#client-path').val(store.get('clientPath'));
+    $('#token-expiry').val(store.get('tokenExpiry'));
 
     $('#browse-btn').click(() => {
         dialog.showOpenDialog(remote.getCurrentWindow(), {
@@ -37,6 +39,45 @@ $(document).ready(() => {
             $('#client-path').val(paths[0]);
             ipcRenderer.send('client:check');
         });
+    });
+
+    $('#client-path').keydown(function(e) {
+        var key = e.which;
+        if (key == 13) $(this).blur();
+    });
+
+    $('#client-path').blur(function() {
+        var p = $(this).val();
+        if (!fs.existsSync(p)) {
+            $(this).val(store.get('clientPath'));
+            sendNotification('Path does not exist!', 'Click here to create and set new path.', () => {
+                fs.mkdirSync(p);
+                store.set('clientPath', p);
+                $(this).val(p);
+            });
+            return;
+        }
+        store.set('clientPath', p);
+    });
+
+    $('#token-expiry').keydown(function(e) {
+        var key = e.which;
+        if (key == 13) $(this).blur();
+    });
+
+    $('#token-expiry').blur(function() {
+        var expiry = $(this).val();
+        var min = (60 * 60) * 1000;
+        var max = (24 * 60 * 60) * 1000;
+        var error;
+        if (expiry < min) error = 'Expiry time must be at least 1 hour.';
+        else if (expiry > max) error = 'The maximum expiry time is 1 day.';
+        if (error) {
+            $(this).val(store.get('tokenExpiry'));
+            sendNotification('Error saving expiry time', error);
+            return;
+        }
+        store.set('tokenExpiry', expiry);
     });
 
     $('.switch input').change(function() {

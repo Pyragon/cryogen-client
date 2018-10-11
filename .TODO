@@ -8,11 +8,12 @@ Packaging:
 Preferences:
     Impl:
         ☐ Create forum thread explaining dangers of auto login
-    Widgets:
-        ☐ List of installed widgets
+    Widgets/Plugins:
+        ✔ List of installed widgets/plugins @done(2018-09-09 23:01) @project(Preferences / Widgets/Plugins)
         ☐ List can be sorted by the options (name, date added, installed, position)
-        ☐ Edit modal system to load a modal inside the preferences modal to set the widget preferences
-        ☐ Install option at the top. (Requires NPM)
+        ✔ Edit modal system to load a modal inside the preferences modal to set the widget/plugin preferences @done(2018-09-09 23:01) @project(Preferences / Widgets/Plugins)
+        ✔ Install option at the top. (Requires NPM) @done(2018-09-09 23:01) @project(Preferences / Widgets/Plugins)
+        ✔ All config options to be edited. @done(2018-09-09 23:01) @project(Preferences / Widgets/Plugins)
     API Settings (Advanced):
         ☐ Token expiry time
 Telemetry Events:

@@ -22,7 +22,7 @@ $(document).ready(() => {
     var gitResult;
 
     loadWidgets();
-    $('.location-edit').click();
+    bgTables();
     //Attempt to check if NPM is installed. Provide link if not
     npm.checkNPM((result) => {
         npmResult = result;
@@ -35,14 +35,16 @@ $(document).ready(() => {
             });
             if (npmResult && gitResult) {
                 elm.off('click');
-                elm.prop('title', 'It seems you have NPM and GIT installed. You\'re all set.');
-            } else elm.prop('title', 'Uh oh. You don\'t seem to have either GIT or NPM installed. (or both) Click to install.');
+                elm.prop('title', 'It seems you have NPM and Git installed. You\'re all set.');
+            } else elm.prop('title', 'Uh oh. You don\'t seem to have either Git or NPM installed. (or both) Click to install.');
         });
     });
 
-    $('#preferences').on('remove', () => {
+    $('#widgets-container').on('remove', () => {
         $(document).off('click', '.widget-active');
         $(document).off('click', '#widgets-container .table-remove');
+        $(document).off('click', '.config-btn');
+        $(document).off('click', '.widget-position');
         ui.getWidgets().unsubscribe('widget-pref');
     });
 
@@ -50,6 +52,87 @@ $(document).ready(() => {
         var name = $(this).closest('tr').data('name');
         toggleActive(name);
     });
+
+    $(document).on('click', '.config-btn', function() {
+        var name = $(this).closest('tr').data('name');
+        var data = ui.getWidgets().getWidgetData(name);
+        modals.viewModal({
+            name: 'settings_view',
+            title: 'Edit Widget Configuration',
+            width: 300,
+            position: {
+                left: 150
+            },
+            saveDragPosition: false,
+            container: 'preferences',
+            location: 'preferences/settings_view',
+            model: {
+                pluginName: data.name,
+                config: data.config,
+                onConfirm: (name) => {
+                    var container = $('.conf-container');
+                    container.find('.pref-line').each(function(i, obj) {
+                        var configName = $(this).data('key');
+                        var value = $(this).find('input').val();
+                        if ($(this).find('.switch').length > 0)
+                            value = $(this).find('.switch input').prop('checked');
+                        if (value == '' && $(this).find('input').prop('placeholder') != '')
+                            value = $(this).find('input').prop('placeholder');
+                        ui.getWidgets().setValue(name, configName, value);
+                    });
+                    modals.destroyModal('preferences');
+                    ui.getWidgets().reloadWidgets();
+                },
+                test: function() {
+                    if (!settingsChanged(name)) modals.destroyModal('preferences');
+                    else
+                        modals.viewModal({
+                            name: 'confirmation',
+                            title: 'Would you like to save your settings?',
+                            width: '150px',
+                            saveDragPosition: false,
+                            container: 'preferences',
+                            model: {
+                                title: 'Would you like to save your settings?',
+                                onConfirm: (name) => {
+                                    var container = $('.conf-container');
+                                    container.find('.pref-line').each(function(i, obj) {
+                                        var configName = $(this).data('key');
+                                        var value = $(this).find('input').val();
+                                        if ($(this).find('.switch').length > 0)
+                                            value = $(this).find('.switch input').prop('checked');
+                                        if (value == '' && $(this).find('input').prop('placeholder') != '')
+                                            value = $(this).find('input').prop('placeholder');
+                                        ui.getWidgets().setValue(name, configName, value);
+                                    });
+                                    modals.destroyModal('preferences');
+                                    ui.getWidgets().reloadWidgets();
+                                }
+                            }
+                        });
+                }
+            }
+        });
+    });
+
+    function settingsChanged(name) {
+        var data = ui.getWidgets().getWidgetData(name);
+        console.log(name);
+        if (!data) return false;
+        console.log('hi');
+        var config = data.config;
+        var ret = false;
+        $('.conf-container .pref-line').each(function(i, obj) {
+            var configName = $(this).data('key');
+            var value = $(this).find('input').val();
+            if ($(this).find('.switch').length > 0)
+                value = $(this).find('.switch input').prop('checked');
+            if (value == '' && $(this).find('input').prop('placeholder') != '')
+                value = $(this).find('input').prop('placeholder');
+            if (config[configName] != value) ret = true;
+        });
+        return ret;
+    }
 
     function toggleActive(name) {
         var data = ui.getWidgets().getWidgetData()[name];
@@ -91,7 +174,7 @@ $(document).ready(() => {
             display: 'block',
             color: error ? '#FF0000' : '#00FF00'
         });
-        $('.installed-title').addClass('withError');
+        //$('.installed-title').addClass('withError');
         elem.html(message);
         elem.fadeOut(7500, () => {
             $('#widgets-error').css('display', 'none');
@@ -99,8 +182,8 @@ $(document).ready(() => {
         });
     }
 
-    $('.widget-position').click((e) => {
-        var name = $(e.target).closest('tr').data('name');
+    $(document).on('click', '.widget-position', function() {
+        var name = $(this).closest('tr').data('name');
         var data = ui.getWidgets().getWidgetData()[name];
         var pos = data.position;
         var html = loader.loadFile(path.join(__dirname + '/modals/preferences/widgets/position_modal.pug'), {
@@ -177,7 +260,7 @@ $(document).ready(() => {
         var name = $(this).closest('tr').data('name');
         var data = ui.getWidgets().getWidgetData()[name];
         if (!data) return false;
-        var html = loader.loadFile(path.join(__dirname + '/modals/confirmation.pug'), {
+        var html = loader.loadFile(__dirname + '/modals/confirmation.pug', {
             name,
             title: null,
             confirm: 'Yes',
@@ -188,8 +271,7 @@ $(document).ready(() => {
                     ui.getWidgets().removeWidget(name);
                 var location = data.location;
                 var p = path.resolve(location);
-                if (!fs.existsSync(p)) return;
-                rimraf(p, () => {});
+                if (fs.existsSync(p)) rimraf(p, () => {});
                 ui.getWidgets().deleteWidget(name);
             },
             onClose: function() {
@@ -210,10 +292,7 @@ $(document).ready(() => {
     $('.location-edit').click(function() {
         var name = $(this).closest('tr').data('name');
         var data = ui.getWidgets().getWidgetData()[name];
-        if (!data) {
-            console.log('no data for ' + name);
-            return;
-        }
+        if (!data) return;
         data = JSON.parse(JSON.stringify(data));
         var html = pug.renderFile(__dirname + '/modals/preferences/widgets/location.pug', {
             options: data,
@@ -254,20 +333,19 @@ $(document).ready(() => {
 
     $('#install-widget-btn').click(() => {
         var name = $('#widget-install-name').val();
+        if (!name) return;
         npm.checkPackage(name, (error, result) => {
             if (error) {
                 console.error(error);
                 return;
             }
             var realResults = [];
-            if (result.results[0].name[0].includes('cclient') && result.results[0].name[0] === name) {
-                //exact match. Install this package.
+            if (result.results[0].name[0].includes('cclient-widget') && result.results[0].name[0] === name)
                 realResults.push(result.results[0]);
-            } else {
+            else
                 realResults = result.results
-                    .filter(r => r.name[0].includes('cclient-widget'))
-                    .filter(r => !ui.getWidgets().getWidgetData(r.name[0]));
-            }
+                .filter(r => r.name[0].includes('cclient-widget'))
+                .filter(r => !ui.getWidgets().getWidgetData(r.name[0]));
             modals.viewModal({
                 name: 'install_npm_package',
                 title: 'Package to Install',
@@ -275,32 +353,29 @@ $(document).ready(() => {
                 container: 'preferences',
                 saveDragPosition: false,
                 model: {
-                    results: realResults
+                    results: realResults,
+                    type: 'widget'
                 },
                 onDestroy: () => {
-                    context.unregisterSelector('.install-widget-table');
+                    context.unregisterSelector('.install-table');
                 }
             });
             $('#preferences').on('remove', () => modals.destroyModal());
         });
     });
 
-    function loadWidget(error, result, data) {
-        var html = pug.renderFile(path.join(__dirname + '/modals/preferences/widgets/widget_tr.pug'), {
-            data,
-            module: result
+    function loadWidget(error, data) {
+        var html = pug.renderFile(__dirname + '/modals/preferences/widgets/widget_tr.pug', {
+            data
         });
         $('#widgets-container tbody').append($(html));
-        setTimeout(() => bgTables(), 100);
+        setTimeout(bgTables, 100);
     }
 
     function loadWidgets() {
         $('#widgets-container tbody').empty();
         var widgets = ui.getWidgets().getWidgetData();
-        for (var _widget in widgets) {
-            var widget = widgets[_widget];
-            ui.getWidgets().loadModule(widget, loadWidget);
-        }
+        for (var _widget in widgets) loadWidget(null, widgets[_widget]);
     }
 
     ui.getWidgets().subscribe('widget-pref', () => loadWidgets());
