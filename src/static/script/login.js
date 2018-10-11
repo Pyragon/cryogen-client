@@ -9,6 +9,19 @@ var _login = function() {
     var password;
     var remember_check;
 
+    function checkGithubSize() {
+        var height = $('#last-commit').height();
+        if (height > 20) {
+            var commit = $('#last-commit').html();
+            $('#last-commit').prop('title', commit);
+            commit = commit.substring(0, commit.length - 10);
+            commit += '...';
+            $('#last-commit').html(commit);
+            checkGithubSize();
+            return;
+        }
+    }
+
     function keyPressed(e) {
         var value = $(e.target).val();
         var id = $(e.target).attr('id');
@@ -74,7 +87,9 @@ var _login = function() {
     return {
 
         start: function(callback) {
-            registerGithub();
+            setTimeout(() => {
+                registerGithub(checkGithubSize);
+            }, 100);
 
             getCookie('login-name', (error, value) => {
                 if (error) return;
