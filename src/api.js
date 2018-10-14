@@ -41,7 +41,7 @@ var _api = function(cryogen, client) {
             if (!fs.existsSync(d))
                 fs.mkdirSync(d);
             var file = fs.createWriteStream(p);
-            var location = 'http://localhost:5555' + '' + clientPath;
+            var location = 'http://api.cryogen.live/live/download/' + version;
             progress(_request(location), {
 
                 })
