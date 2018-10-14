@@ -6,20 +6,20 @@ const path = require('path');
 const setupPug = require('electron-pug');
 const windowState = require('electron-window-state');
 const notifier = require('node-notifier');
-const {
-    openProcessManager
-} = require('electron-process-manager');
+// const {
+//     openProcessManager
+// } = require('electron-process-manager');
 var _tray = require(__dirname + '/tray/tray.js');
 var _github = require(__dirname + '/github.js');
 var _client = require(__dirname + '/client.js');
 var _api = require(__dirname + '/api.js');
-require('electron-reload')(__dirname, {
-    electron: require('$(__dirname)/../../node_modules/electron')
-});
-require('electron-debug')({
-    showDevTools: true,
-    enabled: true
-});
+// require('electron-reload')(__dirname, {
+//     electron: require('$(__dirname)/../../node_modules/electron')
+// });
+// require('electron-debug')({
+//     showDevTools: true,
+//     enabled: true
+// });
 const {
     app,
     BrowserWindow,
@@ -34,6 +34,9 @@ const store = new Store({
     defaults
 });
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+
+// const setupEvents = require('./installers/setup-events');
+// if (setupEvents.handleSquirrelEvent()) return;
 
 var Cryogen = (function() {
 
