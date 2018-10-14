@@ -11,8 +11,7 @@ const app = require('electron').app;
 var _api = function(cryogen, client) {
 
     const headerOptions = {
-        hostname: 'localhost',
-        port: 5555,
+        hostname: 'api.cryogen.live',
         headers: {
 
         }
@@ -37,10 +36,7 @@ var _api = function(cryogen, client) {
         },
 
         downloadClient: function(version, clientPath) {
-            console.log('p: ' + clientPath);
-            console.log('s: ' + cryogen.getStore().get('clientPath'));
             var p = path.join(cryogen.getStore().get('clientPath'), '/client/client_v' + version + '.jar');
-            console.log(p);
             var d = path.join(cryogen.getStore().get('clientPath'), '/client/');
             if (!fs.existsSync(d))
                 fs.mkdirSync(d);
