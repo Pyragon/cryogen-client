@@ -16,7 +16,7 @@ var _ui = function() {
 
     var started;
 
-    var debug = true;
+    var debug = false;
 
     function registerNotifications(user) {
         renderer.on('log', (event, data) => console.log(data.message));
