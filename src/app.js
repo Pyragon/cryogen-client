@@ -47,7 +47,7 @@ var Cryogen = (function() {
 
     function startElectron() {
         app.on('ready', () => {
-            app.setAppUserModelId('Cryogen.CryoWebClient');
+            app.setAppUserModelId('com.cryo.wrapper');
             setupPug({
                 pretty: true
             }, {});
