@@ -149,9 +149,7 @@ var Cryogen = (function() {
 
         },
 
-        updateProgress: (progress) => {
-            updateProgress(progress);
-        },
+        updateProgress: updateProgress,
 
         updateClient: function(version, disableBtn, btnText, play, action) {
             window.webContents.send('client:set-version', {
@@ -163,7 +161,7 @@ var Cryogen = (function() {
             });
         },
 
-        sendNotification: (title, body, callback, silent) => {
+        sendNotification: (title, body, callback, silent = false) => {
             var noty = new Notification({
                 title,
                 body: 'noty',
@@ -173,7 +171,7 @@ var Cryogen = (function() {
             noty.show();
         },
 
-        sendMessage: (opcode, data) => sendMessage(opcode, data),
+        sendMessage: sendMessage,
 
         getWindow: function() {
             return window;
