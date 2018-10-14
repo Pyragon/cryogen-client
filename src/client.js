@@ -1,10 +1,11 @@
 const path = require('path');
 const fs = require('fs');
 const _api = require(__dirname + '/api.js');
-var spawn = require('child_process').spawn;
+const child_process = require('child_process');
+const spawn = child_process.spawn;
 const app = require('electron').app;
 
-var _client = function(app) {
+var _client = function(cryogen) {
 
     var latestVersion;
     var localVersion;
@@ -20,33 +21,38 @@ var _client = function(app) {
     return {
 
         init: function() {
-            api = _api(app, this);
+            api = _api(cryogen, this);
         },
 
         play: function() {
             if (!localVersion) {
-                app.updateClient('Error running...', false, 'Retry', false, 'Error finding client version. Please restart or retry download.');
+                cryogen.updateClient('Error running...', false, 'Retry', false, 'Error finding client version. Please restart or retry download.');
                 return;
             }
             getLatestVersion((response) => {
                 if (response.error) {
-                    app.updateClient('Error getting latest', false, 'Retry', false, 'Error getting latest version from API. Please try again.');
+                    cryogen.updateClient('Error getting latest', false, 'Retry', false, 'Error getting latest version from API. Please try again.');
                     return;
                 }
                 latestVersion = response.version;
-                console.log(localVersion + ' ' + latestVersion);
                 if (localVersion != latestVersion) {
-                    app.updateClient('OOD', false, 'Update', false, 'Client is no longer up to date. Please update and try again.');
+                    cryogen.updateClient('OOD', false, 'Update', false, 'Client is no longer up to date. Please update and try again.');
                     return;
                 }
-                app.getWindow().minimize();
-                var p = path.join(app.getStore().get('clientPath'), '/client/client_v' + localVersion + '.jar');
-                var child = spawn(p, {
+                cryogen.getWindow().minimize();
+                var p = path.join(cryogen.getStore().get('clientPath'), '/client/client_v' + localVersion + '.jar');
+                if (!fs.existsSync(p)) {
+                    console.log('File does not exist.');
+                    return;
+                }
+                var child = spawn(`"${p.replace(/\\/g, "/")}"`, {
                     shell: true
                 });
-
                 child.stdout.setEncoding('utf8');
                 child.stdout.on('data', console.log);
+                child.stderr.on('data', (error) => {
+                    console.error('Error loading client: ' + (error.message || error));
+                });
             });
         },
 
@@ -56,7 +62,7 @@ var _client = function(app) {
                 path: clientPath,
                 dateDownloaded: new Date().getTime()
             };
-            var p = path.join(app.getStore().get('clientPath'), '/client/props.json');
+            var p = path.join(cryogen.getStore().get('clientPath'), '/client/props.json');
             fs.writeFile(p, JSON.stringify(data), (error) => {
                 if (error)
                     console.log('Error updating properties file: ' + error);
@@ -66,13 +72,13 @@ var _client = function(app) {
         update: function() {
             getLatestVersion((response) => {
                 if (response.error) {
-                    app.updateClient('Error getting latest', false, 'Retry', false, 'Error getting latest version from API. Please try again.');
+                    cryogen.updateClient('Error getting latest', false, 'Retry', false, 'Error getting latest version from API. Please try again.');
                     return;
                 }
                 localVersion = response.version;
                 var version = response.version;
                 var path = '/live/download/' + version;
-                app.updateClient(null, true, 'Downloading...', false, `Starting download for v${version} from ${path}`);
+                cryogen.updateClient(null, true, 'Downloading...', false, `Starting download for v${version} from ${path}`);
                 api.downloadClient(version, path);
             });
         },
@@ -80,11 +86,11 @@ var _client = function(app) {
         checkForLocal: function() {
 
             function respond(data) {
-                app.sendMessage('client:check', data);
+                cryogen.sendMessage('client:check', data);
             }
 
-            var p = path.join(app.getStore().get('clientPath'), '/client/props.json');
-            var r = path.resolve(app.getStore().get('clientPath'), '/client/');
+            var p = path.join(cryogen.getStore().get('clientPath'), '/client/props.json');
+            var r = path.resolve(cryogen.getStore().get('clientPath'), '/client/');
             if (!fs.existsSync(p)) {
                 respond({
                     found: false,
@@ -105,7 +111,7 @@ var _client = function(app) {
                 localVersion = json.version;
                 getLatestVersion((response) => {
                     if (response.error) {
-                        app.updateClient('Error getting latest', false, 'Retry', false, 'Error getting latest version from API. Please try again.');
+                        cryogen.updateClient('Error getting latest', false, 'Retry', false, 'Error getting latest version from API. Please try again.');
                         return;
                     }
                     respond({
