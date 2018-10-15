@@ -2,18 +2,18 @@ module.exports = function(app) {
     var config = {
 
         widgets: [{
-                name: 'cclient-latest-threads',
+                name: 'cclient-widget-latest-threads',
                 position: 'first',
                 config: {},
                 active: true,
-                location: './src/static/script/widgets/defaults/cclient-latest-threads',
+                location: './src/static/script/widgets/defaults/cclient-widget-latest-threads',
             },
             {
-                name: 'cclient-latest-updates',
+                name: 'cclient-widget-latest-updates',
                 position: 'second',
                 config: {},
                 active: true,
-                location: './src/static/script/widgets/defaults/cclient-latest-updates'
+                location: './src/static/script/widgets/defaults/cclient-widget-latest-updates'
             }
         ],
         clientPath: null,

@@ -4,3 +4,4 @@
 *.iml
 /dist/
 /installer/
+/src/static/script/widgets/defaults/
