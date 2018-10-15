@@ -3,14 +3,14 @@
     "version": "1.0.0",
     "description": "Desktop client for Cryogen RSPS",
     "main": "src/app.js",
-    "productName": "Cryogen Client Wrapper",
+    "productName": "Cryogen Wrapper",
     "scripts": {
         "start": "electron .",
         "pack": "build --dir"
     },
     "build": {
         "appId": "com.cryogen.wrapper",
-        "productName": "Cryogen Client Wrapper",
+        "productName": "Cryogen Wrapper",
         "mac": {
             "category": "public.app-category.games"
         }
