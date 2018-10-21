@@ -142,7 +142,7 @@ var _widgets = function() {
             }
             try {
                 var widget = result;
-                var widgetPath = data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + data.name;
+                var widgetPath = data.default === true ? path.join(__dirname, 'defaults', data.name) : data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + data.name;
                 var pkg = require(widgetPath + '/package.json');
                 var config = data.config;
                 if (pkg.defaultConfig) {
@@ -194,7 +194,7 @@ var _widgets = function() {
     }
 
     function loadModule(data, callback) {
-        var widgetPath = data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + data.name;
+        var widgetPath = data.default === true ? path.join(__dirname, 'defaults', data.name) : data.location ? path.resolve(data.location) : app.getPath('userData') + '/widgets/' + data.name;
         try {
             callback(null, require(widgetPath)(), data);
         } catch (error) {

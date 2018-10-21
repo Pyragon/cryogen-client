@@ -6,14 +6,14 @@ module.exports = function(app) {
                 position: 'first',
                 config: {},
                 active: true,
-                location: './src/static/script/widgets/defaults/cclient-widget-latest-threads',
+                default: true
             },
             {
                 name: 'cclient-widget-latest-updates',
                 position: 'second',
                 config: {},
-                active: true,
-                location: './src/static/script/widgets/defaults/cclient-widget-latest-updates'
+                default: true,
+                active: true
             }
         ],
         clientPath: null,
