@@ -15,7 +15,7 @@ Preferences:
         ✔ Install option at the top. (Requires NPM) @done(2018-09-09 23:01) @project(Preferences / Widgets/Plugins)
         ✔ All config options to be edited. @done(2018-09-09 23:01) @project(Preferences / Widgets/Plugins)
     API Settings (Advanced):
-        ☐ Token expiry time
+        ✔ Token expiry time @done(2018-10-15 22:14) @project(Preferences / API Settings \(Advanced\))
 Telemetry Events:
     ☐ Notify on server restart that Telemetry events will soon go offline
     ☐ Check for when server is back online and register events again
