@@ -72,6 +72,14 @@ var _api = function(cryogen, client) {
             options.path = options.path + '?' + querystring.stringify(data);
             var extended = extend(headerOptions, options);
             var req = http.request(extended, (res) => {
+                if (res.statusCode == 523) {
+                    console.error('Unable to connect to website.');
+                    callback({
+                        success: false,
+                        error: 'Unable to connect to website.'
+                    });
+                    return;
+                }
                 res.setEncoding('utf8');
                 let dataChunk = '';
                 res.on('data', (chunk) => {

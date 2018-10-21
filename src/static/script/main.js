@@ -174,6 +174,14 @@ function request(options, data, callback, tokenRefresh = false) {
     var defCopy = JSON.parse(JSON.stringify(headerOptions));
     var extended = extend(defCopy, options);
     var req = http.request(extended, (res) => {
+        if (res.statusCode == 523) {
+            console.error('Unable to connect to website.');
+            callback({
+                success: false,
+                error: 'Unable to connect to website.'
+            });
+            return;
+        }
         res.setEncoding('utf8');
         let dataChunk = '';
         res.on('data', (chunk) => {
