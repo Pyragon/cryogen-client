@@ -26,7 +26,8 @@ const {
     Menu,
     ipcMain,
     session,
-    protocol
+    protocol,
+    Notification //jshint ignore:line
 } = electron;
 var defaults = require(__dirname + '/defaults.js')(app);
 const Store = require('electron-store');
@@ -91,6 +92,16 @@ var Cryogen = (function() {
         ipcMain.on('bar:animate', (event, data) => {
             updateProgress(data.progress, true);
         });
+    }
+
+    function sendNotification(title, body, callback, silent = false) {
+        var noty = new Notification({
+            title,
+            body,
+            silent,
+            icon: 'http://cryogen.live/images/icon.png'
+        });
+        noty.show();
     }
 
     function createWindow() {
@@ -164,15 +175,7 @@ var Cryogen = (function() {
             });
         },
 
-        sendNotification: (title, body, callback, silent = false) => {
-            var noty = new Notification({
-                title,
-                body: 'noty',
-                silent,
-                icon: 'http://cryogen.live/images/icon.png'
-            });
-            noty.show();
-        },
+        sendNotification: sendNotification,
 
         sendMessage: sendMessage,
 
