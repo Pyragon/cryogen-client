@@ -9,7 +9,7 @@
         "pack": "build --dir"
     },
     "build": {
-        "appId": "com.cryogen.wrapper",
+        "appId": "Cryogen.WebClient",
         "productName": "Cryogen Wrapper",
         "mac": {
             "category": "public.app-category.games"
