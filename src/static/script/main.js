@@ -266,7 +266,10 @@ function getUserData(callback) {
         return;
     }
     var now = new Date().getTime();
-    if (userData && lastDataCheck < now) callback(userData);
+    if (userData && lastDataCheck < now) {
+        callback(userData);
+        return;
+    }
     request({
         path: '/users/me',
         method: 'GET'
@@ -284,6 +287,9 @@ function getUserData(callback) {
 
 function switchToLogin() {
     setAuthToken(null, 0);
+    userData = undefined;
+    lastDataCheck = 0;
+
     ui.destroy();
     login.init();
 }
