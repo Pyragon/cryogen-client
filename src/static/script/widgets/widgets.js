@@ -2,7 +2,7 @@ const electron = require('electron');
 const renderer = electron.ipcRenderer;
 const app = electron.remote.app;
 
-var _widgets = function() {
+var _widgets = function () {
 
     var widgets = [];
     var widgetData = [];
@@ -55,7 +55,7 @@ var _widgets = function() {
     }
 
     function subscribe(name, callback) {
-        subscriptions.name = callback;
+        subscriptions[name] = callback;
     }
 
     function unsubscribe(name) {
@@ -215,11 +215,11 @@ var _widgets = function() {
             updateDom(name);
         },
 
-        getWidgets: function() {
+        getWidgets: function () {
             return widgets;
         },
 
-        getWidgetData: function(name) {
+        getWidgetData: function (name) {
             return name ? widgetData[name] : widgetData;
         },
 
@@ -234,7 +234,7 @@ var _widgets = function() {
         loadModule,
         setValue,
 
-        positionTaken: function(pos) {
+        positionTaken: function (pos) {
             return position[pos];
         }
 
