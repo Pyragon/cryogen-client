@@ -55,7 +55,7 @@
     "snyk": "^1.258.2"
   },
   "devDependencies": {
-    "electron": "^2.0.8",
+    "electron": "^15.5.5",
     "electron-packager": "^12.1.0",
     "electron-reload": "^1.2.5",
     "electron-winstaller": "^2.7.0",
