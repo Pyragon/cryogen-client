@@ -30,7 +30,7 @@
   "dependencies": {
     "@trodi/electron-splashscreen": "^0.3.1",
     "auto-launch": "^5.0.5",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.1",
     "child-process-promise": "^2.2.1",
     "cookie-parser": "^1.4.3",
     "dateformat": "^3.0.3",
@@ -40,7 +40,7 @@
     "electron-store": "^2.0.0",
     "electron-titlebar": "0.0.3",
     "electron-window-state": "^4.1.1",
-    "express": "^4.16.3",
+    "express": "^4.18.2",
     "get-repository-url": "^2.0.0",
     "node-notifier": "^5.2.1",
     "node-process-windows": "0.0.2",
