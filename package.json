@@ -40,7 +40,7 @@
     "electron-store": "^2.0.0",
     "electron-titlebar": "0.0.3",
     "electron-window-state": "^4.1.1",
-    "express": "^4.16.3",
+    "express": "^4.19.2",
     "get-repository-url": "^2.0.0",
     "node-notifier": "^5.2.1",
     "node-process-windows": "0.0.2",
